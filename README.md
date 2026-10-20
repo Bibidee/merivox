@@ -1,27 +1,21 @@
 # Merivox — The Decision Studio
 
-**SOURCE HANDOFF / PARTIAL IMPLEMENTATION / NOT DEPLOYMENT-READY**
+**Production V1 — GenLayer Studionet 61999**
 
 Merivox is a backendless GenLayer application for forming more representative community ballots. Eligible members propose actionable alternatives; independent validators will classify whether those alternatives are materially equivalent before the ballot freezes. Members, not AI, vote on the final choices.
 
-## Status of this handoff
+## Current status
 
-This archive contains an original Next.js App Router + TypeScript interface and an initial Python Intelligent Contract. It is meant for Codex to audit and complete, **not to deploy unchanged**.
+Merivox is deployed to [merivox.vercel.app](https://merivox.vercel.app) and connected to the final Intelligent Contract on GenLayer Studionet (chain `61999`). The frontend is backendless: it reads and writes the contract directly through an injected EIP-1193 wallet.
 
 | Area | Status |
 |---|---|
-| Original visual system, landing page, Choice Map | Source implemented; runtime build not verified here |
-| Guided decision creator | UI implemented; writes mapped to existing starter method; not live-tested |
-| Wallet connect, disconnect and chain awareness | Source implemented; not browser-tested |
-| Transaction dock | Source implemented; finality integration requires audit |
-| Round and nomination pages | Source implemented; not live-tested |
-| Deterministic contract registration and nomination | Initial source implemented; Direct Mode not run here |
-| Validator-backed semantic reconciliation | **NOT IMPLEMENTED** |
-| Frozen canonical ballot, voting and result | **NOT IMPLEMENTED** |
-| Hosted testnet lifecycle proofs | **NOT RUN** |
-| GitHub, Vercel, actual deployment | **NOT PERFORMED** |
-
-Everything missing is a launch blocker. Do not claim completion until the full build prompt is executed and evidence has been recorded.
+| Decision Studio frontend and Choice Map | Redesigned, responsive and deployed |
+| Guided decision creator and wallet gating | Implemented against the live contract ABI |
+| Validator-backed semantic reconciliation | Implemented with conservative uncertainty/fallback behavior |
+| Frozen ballot, voting, quorum and tie result | Implemented and covered by Direct Mode tests |
+| Studionet lifecycle evidence | Verified with live round `1` and finalized tie |
+| GitHub and Vercel | Pushed to `main`; production deployment is READY |
 
 ## Non-negotiable product definition
 
@@ -47,15 +41,15 @@ Everything missing is a launch blocker. Do not claim completion until the full b
 
 ## Existing structure
 
-- `contracts/merivox.py`: partial contract for round creation, nominations and entering reconciliation.
+- `contracts/merivox.py`: Intelligent Contract for immutable rounds, nominations, validator reconciliation, frozen ballots, voting and deterministic outcomes.
 - `app/`: static Next.js routes for the landing, wizard, round workspace, alignment, ballot, outcome, activity and method.
-- `components/ChoiceMap.tsx`: original responsive visual demonstration. Explicitly **illustrative**.
-- `components/AppProviders.tsx`: injected-wallet state; **audit and test** before production.
-- `lib/chain.ts`: direct GenLayer client and transaction lifecycle helper; **audit SDK compatibility, receipt interpretation and canonical readback**.
+- `components/ChoiceMap.tsx`: contract-backed Choice Map with explicit live, canonical and uncertain states; the home preview is labelled illustrative.
+- `components/AppProviders.tsx`: injected-wallet state and network handling.
+- `lib/chain.ts`: direct GenLayer client and transaction lifecycle helper with canonical readback.
 - `docs/SPEC.md`: binding product semantics and state-machine requirements.
 - `docs/ARCHITECTURE.md`: no-backend model and frontend design system.
 - `docs/SECURITY.md`: threat model and invariants.
-- `docs/DEPLOYMENT.md`: real-evidence checklist, empty until proven.
+- `docs/DEPLOYMENT.md`: recorded deployment, lifecycle and browser evidence.
 - `CODEX_BUILD_PROMPT.md`: instructions to complete, test, deploy and harden.
 
 ## Local setup (for Codex after auditing)
@@ -69,7 +63,7 @@ npm run test
 npm run build
 ```
 
-The package lockfile is not included because npm registry access was unavailable in the handoff environment. Generate and commit `package-lock.json` through a genuine `npm install` in the build environment; do not claim dependencies were installed here.
+The committed `package-lock.json` is used by the production build. The repository-local GenLayer CLI is pinned to `0.39.1`.
 
 For contract verification:
 
@@ -79,20 +73,17 @@ python -m pip install -r requirements-dev.txt
 python -m pytest tests
 ```
 
-Only static Python checks are bundled initially. Codex must add and run comprehensive GenLayer Direct Mode tests. These existing commands are not evidence that the current contract can be deployed.
+The Direct Mode suite uses the pinned `genlayer-py==0.16.3` and `genlayer-test==0.29.2` environment. Run it with Python 3.12 or newer where those packages are available.
 
-Copy `.env.example` to `.env.local` and set a real **final** address only after source verification and deployment:
+For local development, copy `.env.example` to `.env.local` and set the final address:
 
 ```
 NEXT_PUBLIC_MERIVOX_CONTRACT=0x...
 ```
 
-The current zero address is deliberately non-operational. Static pages display a prominent predeployment notice; mock consensus and voting may not be presented as real.
+The browser never contains private keys, and no application backend or database is required.
 
-## What is not yet decided
+## Evidence
 
-The exact validator prompt, full semantic comparison implementation, consensus recovery logic and finalized ballot/vote storage need a hostile audit and completed implementation. Keep the narrow equivalence criteria and conservative uncertainty model in `docs/SPEC.md` rather than expanding into unrelated product features.
+See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for exact deployment, source-parity, live lifecycle and verification evidence.
 
-## Deployment evidence
-
-There is **no** deployed contract address, finalized on-chain lifecycle, GitHub repository, completed CI run or production Vercel URL for this handoff. Fill `docs/DEPLOYMENT.md` with actual evidence after successful verification; never invent values.

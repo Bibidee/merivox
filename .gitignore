@@ -5,7 +5,7 @@ out/
 .env
 .env.local
 .env.*.local
-.venv/
+.venv*/
 __pycache__/
 .pytest_cache/
 coverage/

@@ -16,12 +16,12 @@ The Choice Map shows separate participant nominations becoming canonical choices
 
 ## Routes
 
-- `/`: Discover and premium original identity, illustrative Choice Map with explicit predeployment labels.
+- `/`: Decision Floor with the original premium identity, live recent rounds and a clearly labelled Choice Map concept preview.
 - `/new`: Three-step creator wizard with live unsigned preview.
 - `/round?id=123`: View original nominations and round state, submit a nomination if eligible.
-- `/align?id=123`: Inspect alignment, real validator consensus and assignment history (currently incomplete).
-- `/ballot?id=123`: Display frozen choices and cast one vote if eligible (currently incomplete).
-- `/outcome?id=123`: Deterministic tally, quorum, tie and provenance (currently incomplete).
+- `/align?id=123`: Inspect real validator consensus, canonical assignments and explicit uncertainty.
+- `/ballot?id=123`: Display frozen choices and cast one vote if eligible.
+- `/outcome?id=123`: Deterministic tally, quorum, tie and provenance replay.
 - `/activity`: List actual public rounds from contract.
 - `/method`: Transparent semantics and trust limitations.
 
@@ -37,6 +37,6 @@ The query-parameter pattern supports static export; browser reads do not rely on
 6. Responsive 320px to ultrawide layouts; semantic contrast, keyboard focus, reduced motion and no horizontal overflow.
 7. Proper WCAG-oriented testing, automated browser coverage, and source parity against deployed contract.
 
-## Current handoff limitations
+## Verification state
 
-The `ChoiceMap` is visual and illustrative. `StagePages` deliberately warns that the missing judging/voting APIs must be implemented. The current wallet transaction helper is a **starter**, not a proven receipt decoder. Completion requires SDK/runtime verification and comprehensive tests in the Codex build phase.
+Live Choice Maps are reconstructed from finalized contract reads. Illustrative content is labelled as a concept preview and is never used as live round state. The transaction helper distinguishes signing, submission, provisional acceptance, finality, failure and indeterminate states; writes require an injected wallet and chain `61999`.

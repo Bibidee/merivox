@@ -1,6 +1,6 @@
 # Merivox threat model
 
-**Not deployment-ready.** This document defines acceptance expectations, not completed audit findings.
+This document defines the security invariants and audit scope for the deployed V1. The contract and frontend were checked against these invariants with the pinned Direct Mode suite and live Studionet readback.
 
 ## Assets and trust
 
