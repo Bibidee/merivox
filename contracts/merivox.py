@@ -147,6 +147,8 @@ class Merivox(gl.Contract):
         return gl.message.sender_address.as_hex.lower()
 
     def _get_round(self, round_id: str) -> DecisionRound:
+        if isinstance(round_id, int):
+            round_id = str(round_id)
         r = self.rounds.get(round_id)
         if r is None:
             raise gl.vm.UserError('Decision round does not exist')
@@ -364,6 +366,8 @@ class Merivox(gl.Contract):
 
     @gl.public.write
     def cancel_round(self, round_id: str) -> str:
+        if isinstance(round_id, int):
+            round_id = str(round_id)
         r = self._get_round(round_id)
         if r.status != 'NOMINATING':
             raise gl.vm.UserError('Only a pre-nomination round can be cancelled')
@@ -387,6 +391,8 @@ class Merivox(gl.Contract):
         delivery: str,
         timing: str,
     ) -> str:
+        if isinstance(round_id, int):
+            round_id = str(round_id)
         r = self._get_round(round_id)
         who = self._sender()
         now = self._timestamp()
@@ -431,6 +437,8 @@ class Merivox(gl.Contract):
 
     @gl.public.write
     def begin_alignment(self, round_id: str) -> str:
+        if isinstance(round_id, int):
+            round_id = str(round_id)
         r = self._get_round(round_id)
         if r.status != 'NOMINATING':
             raise gl.vm.UserError('Round has already moved beyond nominations')
@@ -444,6 +452,8 @@ class Merivox(gl.Contract):
 
     @gl.public.write
     def reconcile_next(self, round_id: str) -> str:
+        if isinstance(round_id, int):
+            round_id = str(round_id)
         r = self._get_round(round_id)
         now = self._timestamp()
         if r.status != 'RECONCILING':
@@ -529,6 +539,8 @@ class Merivox(gl.Contract):
 
     @gl.public.write
     def close_alignment(self, round_id: str) -> str:
+        if isinstance(round_id, int):
+            round_id = str(round_id)
         r = self._get_round(round_id)
         now = self._timestamp()
         if r.status != 'RECONCILING':
@@ -540,6 +552,8 @@ class Merivox(gl.Contract):
 
     @gl.public.write
     def open_ballot(self, round_id: str) -> str:
+        if isinstance(round_id, int):
+            round_id = str(round_id)
         r = self._get_round(round_id)
         now = self._timestamp()
         if r.status != 'BALLOT_READY':
@@ -554,6 +568,10 @@ class Merivox(gl.Contract):
 
     @gl.public.write
     def vote(self, round_id: str, choice_id: str) -> str:
+        if isinstance(round_id, int):
+            round_id = str(round_id)
+        if isinstance(choice_id, int):
+            choice_id = str(choice_id)
         r = self._get_round(round_id)
         now = self._timestamp()
         who = self._sender()
@@ -603,6 +621,8 @@ class Merivox(gl.Contract):
 
     @gl.public.write
     def finalize(self, round_id: str) -> str:
+        if isinstance(round_id, int):
+            round_id = str(round_id)
         r = self._get_round(round_id)
         now = self._timestamp()
         if r.status in ('DECIDED', 'TIED', 'NO_QUORUM', 'CANCELLED'):
@@ -656,6 +676,8 @@ class Merivox(gl.Contract):
 
     @gl.public.view
     def get_round(self, round_id: str) -> dict:
+        if isinstance(round_id, int):
+            round_id = str(round_id)
         r = self._get_round(round_id)
         return {
             'id': round_id,
@@ -693,6 +715,8 @@ class Merivox(gl.Contract):
 
     @gl.public.view
     def list_nominations(self, round_id: str, offset: u32, limit: u32) -> list:
+        if isinstance(round_id, int):
+            round_id = str(round_id)
         r = self._get_round(round_id)
         if int(limit) < 1 or int(limit) > MAX_PAGE:
             raise gl.vm.UserError('Invalid page size')
@@ -706,6 +730,8 @@ class Merivox(gl.Contract):
 
     @gl.public.view
     def get_choice(self, choice_id: str) -> dict:
+        if isinstance(choice_id, int):
+            choice_id = str(choice_id)
         c = self.choices.get(choice_id)
         if c is None:
             raise gl.vm.UserError('Choice does not exist')
@@ -713,6 +739,8 @@ class Merivox(gl.Contract):
 
     @gl.public.view
     def get_canonical_ballot(self, round_id: str) -> list:
+        if isinstance(round_id, int):
+            round_id = str(round_id)
         r = self._get_round(round_id)
         results = []
         for cid in r.choice_ids:
@@ -721,6 +749,8 @@ class Merivox(gl.Contract):
 
     @gl.public.view
     def get_alignment(self, round_id: str) -> dict:
+        if isinstance(round_id, int):
+            round_id = str(round_id)
         r = self._get_round(round_id)
         pending_id = ''
         if int(r.alignment_cursor) < len(r.nomination_ids):
@@ -737,6 +767,8 @@ class Merivox(gl.Contract):
 
     @gl.public.view
     def get_member_status(self, round_id: str, wallet: str) -> dict:
+        if isinstance(round_id, int):
+            round_id = str(round_id)
         r = self._get_round(round_id)
         try:
             who = Address(wallet).as_hex.lower()
@@ -753,6 +785,8 @@ class Merivox(gl.Contract):
 
     @gl.public.view
     def get_tally(self, round_id: str) -> dict:
+        if isinstance(round_id, int):
+            round_id = str(round_id)
         r = self._get_round(round_id)
         items = []
         for cid in r.choice_ids:
@@ -762,6 +796,8 @@ class Merivox(gl.Contract):
 
     @gl.public.view
     def get_result(self, round_id: str) -> dict:
+        if isinstance(round_id, int):
+            round_id = str(round_id)
         r = self._get_round(round_id)
         if r.status not in ('DECIDED', 'TIED', 'NO_QUORUM'):
             return {'finalized': False, 'status': r.status}
