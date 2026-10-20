@@ -1,3 +1,18 @@
 import Link from 'next/link';
-import {ArrowUpRight,GitMerge,LockKeyhole,Vote,ShieldCheck,AlertCircle} from 'lucide-react';
-export default function Method(){return <div className="container interior method-page"><div className="eyebrow">HOW MERIVOX WORKS</div><h1 className="page-title">Not just counting votes.<br/><em>Respecting the choices.</em></h1><p className="lede">A fair count starts with a fair ballot. Merivox is designed to make equivalent submissions visible without assigning one organizer the power to rewrite everyone’s alternatives.</p><div className="method-grid"><article><span>01 / PEOPLE</span><GitMerge/><h2>Contribute alternatives</h2><p>Eligible wallets write immutable actionable proposals before the nomination deadline. Members remain accountable for their own wording.</p></article><article><span>02 / INTERPRETATION</span><ShieldCheck/><h2>Independent alignment</h2><p>Validators will assess equivalence of intended outcomes against frozen canonical choices. Ambiguous results must be openly labelled.</p></article><article><span>03 / CHOICE</span><Vote/><h2>Deterministic ballot</h2><p>After the ballot freezes, each eligible wallet gets one vote. AI cannot count votes, rewrite results or break a tie.</p></article><article><span>04 / FINALITY</span><LockKeyhole/><h2>Durable history</h2><p>The application distinguishes accepted transactions from finalized, authoritative state. Prior nominations cannot be erased after a decision.</p></article></div><div className="boundaries"><AlertCircle size={25}/><div><h2>What Merivox does not claim</h2><p>Wallet addresses do not prove unique real-world identities. Equivalence judgments can be wrong or inconclusive. The product records what members selected; it does not guarantee that the winning action is completed. The initial source handoff is not yet a deployed, end-to-end system.</p></div></div><Link className="btn btn-dark" href="/new">Begin a new round <ArrowUpRight size={16}/></Link></div>}
+import { ArrowUpRight, GitMerge, LockKeyhole, ShieldCheck, Vote, AlertCircle } from 'lucide-react';
+
+export default function Method() {
+  return <div className="page narrow">
+    <div className="kicker">The Merivox method / plain language</div>
+    <h1 className="page-title">A fair count starts with a <em>fair ballot.</em></h1>
+    <p className="lede">Merivox gives communities a shared process for moving from many proposals to a public, inspectable choice. The contract keeps the rules and history; validator consensus only helps clarify semantic overlap.</p>
+    <div className="method-cards">
+      <article className="method-card"><span>01 / PEOPLE</span><GitMerge /><h2>Contribute alternatives</h2><p>Eligible wallets submit immutable, actionable proposals before the nomination deadline. Each member remains accountable for their own wording.</p></article>
+      <article className="method-card"><span>02 / INTERPRETATION</span><ShieldCheck /><h2>Align independently</h2><p>GenLayer validators compare a new proposal with frozen canonical anchors. The protocol records consensus, disagreement, and timeout fallback explicitly.</p></article>
+      <article className="method-card"><span>03 / CHOICE</span><Vote /><h2>Freeze the ballot</h2><p>Once choices are reconciled, the ballot opens. Each eligible wallet can cast one public vote, and the tally remains readable on-chain.</p></article>
+      <article className="method-card"><span>04 / FINALITY</span><LockKeyhole /><h2>Replay the outcome</h2><p>Finalization records the result, quorum, ties or no-quorum state, and the mapping from every original alternative to a ballot choice.</p></article>
+    </div>
+    <div className="boundaries"><AlertCircle size={24} /><div><h2>What Merivox does not claim</h2><p>Wallet addresses do not prove unique real-world identities. Validator judgments can be wrong or inconclusive, so ambiguous and unresolved outcomes remain visible. The product records what members selected; it does not guarantee that a winning action is completed.</p></div></div>
+    <Link className="btn btn-dark" href="/new">Begin a new round <ArrowUpRight size={16} /></Link>
+  </div>;
+}
