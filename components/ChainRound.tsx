@@ -1,7 +1,7 @@
 'use client';
 import {useEffect,useState,useCallback} from 'react';
 import Link from 'next/link';
-import {ArrowRight,ExternalLink,RefreshCw,Plus} from 'lucide-react';
+import {ArrowRight,RefreshCw,Plus} from 'lucide-react';
 import {readChain,sendChain} from '@/lib/chain';
 import {contractConfigured} from '@/lib/config';
 import {useApp} from './AppProviders';

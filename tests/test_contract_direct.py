@@ -9,7 +9,6 @@ from __future__ import annotations
 
 from typing import Any
 
-
 QUESTION = 'What should our community build together next?'
 DETAILS = 'A hands-on session with a defined deliverable, audience and schedule.'
 
@@ -57,6 +56,14 @@ def test_round_creation_and_boundaries(direct_vm, direct_deploy, direct_owner, d
         contract.create_round(QUESTION, roster, 1_800_001_200, 1_800_007_200, 4)
     with direct_vm.expect_revert('Ballot deadline must leave at least 15 minutes'):
         contract.create_round(QUESTION, roster, 1_800_001_200, 1_800_001_500, 2)
+
+
+def test_round_creation_accepts_cli_stringified_roster(direct_vm, direct_deploy, direct_owner, direct_alice, direct_bob):
+    contract = direct_deploy('contracts/merivox.py')
+    roster = members(direct_owner, direct_alice, direct_bob)
+    stringified = '[' + ','.join(roster) + ']'
+    round_id = create_round(contract, direct_vm, stringified)
+    assert contract.get_round(round_id)['members'] == roster
 
 
 def test_nomination_membership_uniqueness_and_limits(direct_vm, direct_deploy, direct_owner, direct_alice, direct_bob, direct_charlie, direct_accounts):

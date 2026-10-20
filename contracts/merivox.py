@@ -155,6 +155,15 @@ class Merivox(gl.Contract):
     def _member(self, r: DecisionRound, who: str) -> bool:
         return who in r.members
 
+    def _member_address_text(self, raw) -> str:
+        if isinstance(raw, str):
+            text = raw[5:] if raw.startswith('str:') else raw
+        else:
+            text = getattr(raw, 'as_hex', '')
+        if not isinstance(text, str):
+            return ''
+        return text
+
     def _create_choice(
         self,
         r: DecisionRound,
@@ -277,20 +286,34 @@ class Merivox(gl.Contract):
         ballot_close: u64,
         quorum: u32,
     ) -> str:
-        if not isinstance(question, str) or not isinstance(members, list):
+        if not isinstance(question, str):
+            raise gl.vm.UserError('Invalid round arguments')
+        try:
+            if isinstance(members, str):
+                compact = members.strip()
+                if not compact.startswith('[') or not compact.endswith(']'):
+                    raise gl.vm.UserError('Invalid round arguments')
+                member_values = []
+                for item in compact[1:-1].split(','):
+                    if item.strip():
+                        member_values.append(item.strip().strip('"').strip("'"))
+            else:
+                member_values = list(members)
+        except Exception:
             raise gl.vm.UserError('Invalid round arguments')
         q = question.strip()
         if len(q) < MIN_QUESTION or len(q) > MAX_QUESTION:
             raise gl.vm.UserError('Question must contain 15 to 320 characters')
-        if len(members) < 3 or len(members) > MAX_MEMBERS:
+        if len(member_values) < 3 or len(member_values) > MAX_MEMBERS:
             raise gl.vm.UserError('Choose 3 to 25 eligible wallets')
         seen = set()
         roster = []
-        for raw in members:
-            if not isinstance(raw, str) or len(raw) != 42 or not raw.startswith('0x'):
+        for raw in member_values:
+            text = self._member_address_text(raw)
+            if len(text) != 42 or not text.startswith('0x'):
                 raise gl.vm.UserError('Malformed wallet address')
             try:
-                address = Address(raw).as_hex.lower()
+                address = Address(text).as_hex.lower()
             except Exception:
                 raise gl.vm.UserError('Malformed wallet address')
             if address in seen:

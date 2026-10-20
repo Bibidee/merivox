@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { AlertTriangle, ArrowLeft, ArrowRight, ChartNoAxesColumn, CheckCircle2, Clock3, GitMerge, LockKeyhole, RefreshCw, Vote, WalletCards } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ChartNoAxesColumn, CheckCircle2, Clock3, GitMerge, LockKeyhole, RefreshCw, Vote, WalletCards } from 'lucide-react';
 import { readChain, sendChain } from '@/lib/chain';
 import { contractConfigured } from '@/lib/config';
-import { asNumber, remaining, shortAddress, type AlignmentState, type Choice, type MemberStatus, type Nomination, type Result, type Round, type Tally, type RoundStatus } from '@/lib/model';
+import { asNumber, remaining, type AlignmentState, type Choice, type MemberStatus, type Nomination, type Result, type Round, type Tally, type RoundStatus } from '@/lib/model';
 import { useApp } from './AppProviders';
 import { ChoiceMap } from './ChoiceMap';
 import { PhaseRibbon } from './PhaseRibbon';
