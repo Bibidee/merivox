@@ -6,6 +6,7 @@ import { ArrowRight, RefreshCcw, Search } from 'lucide-react';
 import { readChain } from '@/lib/chain';
 import { contractConfigured } from '@/lib/config';
 import { asNumber, normalizeStatus, type RoundStatus } from '@/lib/model';
+import { readAllPages } from '@/lib/rounds';
 
 type Summary = { id: string; question: string; status: RoundStatus; member_count: number; nomination_count: number; choice_count: number; voter_count: number };
 const filters: Array<{ label: string; value: 'ALL' | 'LIVE' | 'VOTING' | 'FINAL' }> = [{ label: 'All rounds', value: 'ALL' }, { label: 'In motion', value: 'LIVE' }, { label: 'Voting', value: 'VOTING' }, { label: 'Finalized', value: 'FINAL' }];
@@ -23,7 +24,7 @@ export default function Activity() {
     if (!contractConfigured()) { setBusy(false); return; }
     setBusy(true); setError('');
     try {
-      const raw = await readChain<Array<Record<string, unknown>>>('list_rounds', [BigInt(0), BigInt(25)]);
+      const raw = await readAllPages((offset, limit) => readChain<Array<Record<string, unknown>>>('list_rounds', [BigInt(offset), BigInt(limit)]));
       setItems(raw.map(item => ({ id: String(item.id ?? ''), question: String(item.question ?? ''), status: normalizeStatus(item.status), member_count: asNumber(item.member_count), nomination_count: asNumber(item.nomination_count), choice_count: asNumber(item.choice_count), voter_count: asNumber(item.voter_count) })));
     } catch (err) { setError(err instanceof Error ? err.message : 'Could not read rounds from Studionet.'); }
     finally { setBusy(false); }

@@ -1,0 +1,31 @@
+name: Merivox CI
+
+on:
+  push:
+    branches: [main, 'remediation/**']
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run preflight
+
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check -r requirements-dev.txt
+      - run: python -m pytest -q tests/test_contract_static.py tests/test_contract_direct.py

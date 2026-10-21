@@ -6,7 +6,7 @@ Merivox is a backendless GenLayer application for forming more representative co
 
 ## Current status
 
-Merivox is deployed to [merivox.vercel.app](https://merivox.vercel.app) and connected to the final Intelligent Contract on GenLayer Studionet (chain `61999`). The frontend is backendless: it reads and writes the contract directly through an injected EIP-1193 wallet.
+The historical V1 is deployed at [merivox.vercel.app](https://merivox.vercel.app). This remediation branch hardens the contract and lifecycle, but it is not described as production-ready until its new contract deployment, Vercel source parity and genuine live validator lifecycle are recorded in [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md). The architecture remains backendless: the browser reads and writes the contract directly through an injected EIP-1193 wallet.
 
 | Area | Status |
 |---|---|
@@ -14,8 +14,8 @@ Merivox is deployed to [merivox.vercel.app](https://merivox.vercel.app) and conn
 | Guided decision creator and wallet gating | Implemented against the live contract ABI |
 | Validator-backed semantic reconciliation | Implemented with conservative uncertainty/fallback behavior |
 | Frozen ballot, voting, quorum and tie result | Implemented and covered by Direct Mode tests |
-| Studionet lifecycle evidence | Verified with live round `1` and finalized tie |
-| GitHub and Vercel | Pushed to `main`; production deployment is READY |
+| Historical Studionet lifecycle evidence | Live round `1` finalized a tie; later validator calls required explicit fallback |
+| Remediation release | Dedicated branch; deployment and live validator evidence still required |
 
 ## Non-negotiable product definition
 

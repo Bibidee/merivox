@@ -30,7 +30,7 @@ Only on-chain frozen nomination fields are evidence. No arbitrary web fetch is n
 - 1 nomination per eligible wallet, at most 8 per round.
 - Question: 15–320 characters. Title: 8–100. Details: 30–800. Audience, delivery and timing: at most 180 characters each.
 - All times are absolute chain-time comparisons, not browser-clock authority.
-- Round creator chooses nomination deadline, final ballot deadline and quorum. An explicit deterministic alignment deadline must be derived/frozen on creation, leaving enough time to vote. **Codex must review and harden creation constraints before deployment.**
+- Round creator chooses nomination deadline, final ballot deadline and quorum. The contract derives `alignment_close = ballot_close - 900` and requires `ballot_close > nomination_close + 3,300` seconds: 2,400 seconds for eight nominations at three bounded attempts, 60-second cooldowns and a 120-second validator grace per nomination, plus 900 seconds of voting. The frontend uses the same constants and rejects the exact boundary; chain time remains authoritative.
 - One wallet gets one vote. Ballots are public; anonymous or private voting is not claimed.
 - No administrator may override reconciliation, edit original submissions, rewrite votes or choose a winner.
 
@@ -60,7 +60,7 @@ Unique keys must include round ID and sender/alternative identity. Reject duplic
 
 ## UX truth rules
 
-`SIGNING`, `SUBMITTED`, `ACCEPTED`, `FINALIZED`, `FAILED`, `UNDETERMINED` must be distinct in UI. Never mark voting, alignment, or final results complete on transaction acceptance. After finalization read the contract again and verify the expected transition. All illustrative graphics are labelled as examples; do not use fabricated contract addresses, votes or transactions.
+`SIGNING`, `SUBMITTED`, `ACCEPTED`, `FINALIZED`, `VERIFIED`, `FAILED`, `UNDETERMINED` must be distinct in UI. `ACCEPTED` is provisional. `FINALIZED` means the protocol completed successfully; `VERIFIED` additionally means the expected application-state transition was read back from the contract. Never mark voting, alignment, or final results complete on transaction acceptance. All illustrative graphics are labelled as examples; do not use fabricated contract addresses, votes or transactions.
 
 ## Non-goals
 

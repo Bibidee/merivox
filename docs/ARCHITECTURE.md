@@ -31,7 +31,7 @@ The query-parameter pattern supports static export; browser reads do not rely on
 
 1. Typed encoding/decoding of GenLayer contract returns and stable compatible client versions.
 2. Wallet connect, disconnect, account changes and wrong-chain behavior.
-3. Transaction readback after actual FINALIZED, not merely accepted.
+3. Transaction readback after actual FINALIZED, not merely accepted; a write becomes `VERIFIED` only after the expected application transition is observed.
 4. Correct visibility of round eligibility, deadlines and response errors.
 5. Chain-backed voting, alignment and outcome components; no fabricated example data in live views.
 6. Responsive 320px to ultrawide layouts; semantic contrast, keyboard focus, reduced motion and no horizontal overflow.
@@ -39,4 +39,4 @@ The query-parameter pattern supports static export; browser reads do not rely on
 
 ## Verification state
 
-Live Choice Maps are reconstructed from finalized contract reads. Illustrative content is labelled as a concept preview and is never used as live round state. The transaction helper distinguishes signing, submission, provisional acceptance, finality, failure and indeterminate states; writes require an injected wallet and chain `61999`.
+Live Choice Maps are reconstructed from finalized contract reads. Illustrative content is labelled as a concept preview and is never used as live round state. The transaction helper distinguishes signing, submission, provisional acceptance, finality, verified application state, failure and indeterminate states; writes require an injected wallet and chain `61999`.

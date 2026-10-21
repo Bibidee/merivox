@@ -1,68 +1,65 @@
-# Merivox — deployment evidence
+# Merivox V1 — deployment and verification ledger
 
-This ledger contains observed repository, contract, production and browser evidence. Values below are recorded from the actual build and Studionet reads; unavailable explorer data is explicitly marked.
+This file separates the superseded production evidence from the remediation release. A transaction hash or browser observation is evidence only for the source and deployment it actually belongs to.
 
-## Preflight
+## Release status
 
-- [x] Repository-local `npx genlayer --version` reports `0.39.1`
-- [x] `npm run preflight` PASS: network check, typecheck, lint, frontend tests and build
-- [x] Pinned Direct Mode suite PASS: `8 passed` with `genlayer-py==0.16.3`, `genlayer-test==0.29.2`
-- [x] Network/static audit found Studionet `61999` and no application backend or tracked secret
-- [ ] Separate `genvm-lint` executable: unavailable in the repository-local CLI/runtime; Direct Mode and static AST checks passed
-- [ ] Injected-wallet signature flow: requires a browser wallet and human approval
+The remediation branch `remediation/merivox-v1-submission` contains contract and frontend changes that require a new contract deployment. A Vercel preview has been built successfully from the committed branch, but production remains the historical release below until the new contract is finalized and source parity is verified. The release is not called READY on source-only evidence.
 
-## Contract
+Preview deployment evidence:
 
-- Network: Studionet / 61999
-- RPC: https://studio.genlayer.com/api
-- Address: `0xA026BA6f6588186b9F07625b3e355FF7Afbd25a2`
-- Deploy transaction: `0x815f868ac3ef34be0ac4d6699c8370f2e4a9c090985133f43d3f4fa8416c3bec`
-- Finality: `FINALIZED`, `MAJORITY_AGREE`, 5 validator votes (verified with `npx genlayer receipt`)
+- Vercel deployment: `dpl_7hyLi1HjufbzfoRP1rkTAgJi9vxN`
+- Preview URL: [merivox-4bgth3hn1-bibidees-projects.vercel.app](https://merivox-4bgth3hn1-bibidees-projects.vercel.app)
+- Vercel state: `READY`
+- Read-only route checks: `/`, `/new/`, `/activity/`, `/method/` returned HTTP 200 and contained Merivox content.
+- This preview still uses the historical contract environment value; it is not production source-parity evidence for the remediation contract.
+
+## Binding network and tooling
+
+- Network: GenLayer Studionet, chain `61999` (`0xf22f`)
+- RPC: `https://studio.genlayer.com/api`
+- Official explorer: `https://explorer-studio.genlayer.com`
+- Repository-local CLI: `genlayer 0.39.1`
+- Contract architecture: one Python Intelligent Contract, direct browser reads/writes, injected EIP-1193 wallet, no application backend
+
+## Historical production release — superseded
+
+- Contract: `0xA026BA6f6588186b9F07625b3e355FF7Afbd25a2`
+- Deployment transaction: `0x815f868ac3ef34be0ac4d6699c8370f2e4a9c090985133f43d3f4fa8416c3bec`
 - Deployed source SHA-256: `1E1B061858A7897867972600EF9306E1F81D6A0CB3E68001957C98D12C2378DB`
-- Corresponding Git commit: `09f610c878d34db2eb19e86ce2d40f492ab33f94`; `contracts/merivox.py` is unchanged through frontend commit `9831ed0e2d6e4436ca6d9f31dfeaef98f6f0e715`
-- Explorer URL: no public explorer URL was returned by the Studionet RPC/CLI; receipt evidence is recorded above
+- Corresponding source commit: `09f610c878d34db2eb19e86ce2d40f492ab33f94`
+- Historical production URL: [merivox.vercel.app](https://merivox.vercel.app)
+- Historical Vercel deployment: `dpl_FvFu38xRfAi2QcXsCHDVghak8YNY`
+- Historical live round: round `1`, four nominations, four canonical choices, two votes, finalized `TIED` with quorum `2`
+- Historical alignment evidence: one automatic first-anchor `DISTINCT`; later validator transactions returned `RETRY_REQUIRED` and the round ultimately used explicit `UNRESOLVED` timeout fallbacks. This is not evidence of live `EQUIVALENT` or `AMBIGUOUS` classification.
+- Historical finalization transaction: `0x936cd526a91c870f1ebb4e1d5d3c241b622790b228b44e3c9653889e5f0da128`
 
-## Frontend
+The historical round remains valuable negative evidence: the chain receipts show real validator participation and validator disagreement around unavailable results, while the contract preserved uncertainty instead of asserting a merge. It does not satisfy the remediation requirement for genuine live `EQUIVALENT`, `DISTINCT` and `AMBIGUOUS` classifications.
 
-- Vercel production URL: [https://merivox.vercel.app](https://merivox.vercel.app)
-- Configured canonical contract address: the address above
-- Production commit: `9831ed0e2d6e4436ca6d9f31dfeaef98f6f0e715`
-- Vercel deployment: READY, `dpl_FvFu38xRfAi2QcXsCHDVghak8YNY`
-- Responsive checks: `320`, `375`, `430`, `768`, `1024`, `1440` widths; mobile topbar and desktop rail verified
+## Remediation branch evidence
 
-## Live lifecycle A: equivalent mapping and winning vote
+- Branch: `remediation/merivox-v1-submission`
+- Contract source SHA-256 at the current branch state: `F6B13D6E78442329BAE13C216B62CC9ADF28649AB5F9E832E725E371D6548CC5`
+- Contract timing rule: `ballot_close > nomination_close + 3,300` seconds; alignment reserves 2,400 seconds for eight alternatives at three bounded attempts, cooldowns and validator grace, and voting reserves 900 seconds.
+- Contract boundary coverage: exact-boundary rejection and one-second-after acceptance in Direct Mode.
+- Prompt hardening: participant fields are serialized as delimited JSON data; commands, links, role claims and reasoning requests inside data are explicitly untrusted; output is exact-key normalized.
+- Lifecycle hardening: `SIGNING → SUBMITTED → ACCEPTED → FINALIZED → VERIFIED`; finality is not reported as application success until expected contract state is read back.
+- Round identification: creation uses the finalized transaction return value and reads that exact round ID; it never searches by question text.
+- Public directory: reads every `list_rounds` page until a short page instead of silently stopping at 25.
+- Automated suites run locally: TypeScript tests, lint, typecheck, build, static contract checks and Direct Mode contract tests.
+- GitHub Actions workflow: `.github/workflows/ci.yml` runs frontend preflight and pinned Direct Mode tests on pushes and pull requests.
 
-- Round ID: `1`
-- Creation tx: present in the live round record; hash not exposed by the read API used for this evidence
-- Nomination tx hashes: four immutable nominations; per-nomination hashes are not exposed by the read API
-- Alignment tx and observed validator result: live alignment state has `1 DISTINCT` and `3 UNRESOLVED` entries with `ALIGNMENT_TIMEOUT`; deployment receipt finalized with `MAJORITY_AGREE` and 5 validator votes
-- Frozen ballot mapping: 4 canonical choices; choice `1` is canonical and the remaining three remain explicit uncertain fallbacks, each retaining one original submission
-- Vote tx hashes: two public votes are recorded; per-vote hashes are not exposed by the read API
-- Deterministic result tx: `0x936cd526a91c870f1ebb4e1d5d3c241b622790b228b44e3c9653889e5f0da128`
-- Final canonical outcome: `TIED`, reason `EQUAL_HIGHEST_TALLIES`, choices `1` and `2`, 2 voters, quorum 2
+## Required release gates before a READY verdict
 
-## Live lifecycle B: distinct and ambiguous alternatives
+1. Deploy this exact contract source through the wallet flow and record a new finalized Studionet deployment transaction and address.
+2. Update the Vercel production environment to that address and deploy this exact branch; verify Vercel READY status and production source parity.
+3. Create a fresh round through the production browser. The creator must approve each wallet transaction; no private key is accessed by the agent.
+4. Exercise live validator-backed alignment and record finalized receipts with genuine `EQUIVALENT`, `DISTINCT` and `AMBIGUOUS` classifications, including independent validator agreement/reproduction and prompt-injection data.
+5. Finish ballot opening, one-wallet voting, finalization and canonical result readback. Record transaction hashes and the final contract state.
+6. Run browser route, refresh, wrong-chain, rejected-signature, keyboard and mobile checks against the deployed release.
 
-- Round ID: `1`
-- Materially distinct alternatives: live proposal tickets remain separate; the first anchor is `DISTINCT`
-- Ambiguous/inconclusive classifier evidence: three entries are `UNRESOLVED` with `ALIGNMENT_TIMEOUT`
-- Recovery action: explicit fallback kept each unresolved entry visible and independently selectable
-- Resulting ballot grouping: four canonical choices, no silent merges
+## Honest limitations
 
-## Live lifecycle C: negative, tie, no-quorum
-
-- Unauthorized nomination/vote: covered by Direct Mode rejection assertions
-- Duplicate nomination/vote: covered by Direct Mode rejection assertions
-- Invalid transition: covered by Direct Mode rejection assertions
-- Tie result: live round `1` finalized with 2 votes and quorum 2
-- No-quorum result: covered by Direct Mode (`NO_QUORUM`, `TURNOUT_BELOW_QUORUM`)
-- Refresh/returning-user readback: production round, alignment, ballot and outcome routes reconstructed round `1` from chain state
-
-## Browser integrity
-
-- [x] Site routes load from home through create, round, alignment, ballot and outcome
-- [ ] Wallet signing, wrong-chain switching, account changes and rejected signatures: manual wallet required
-- [x] Submitted, accepted (provisional), finalized, failed and undetermined are distinct in the transaction UI
-- [x] Canonical states survive route reload and live reads; no mock decision is shown as live
-- [x] Production Vercel build is READY and Vercel error-log scan returned no logs
-- [x] Local responsive/keyboard validation completed; a too-short question displayed the expected inline error
+- The historical deployment is not source-parity evidence for the remediation branch.
+- A browser wallet signature is a human approval step and cannot be completed without the user’s wallet.
+- The repository-local CLI has no separate `genvm-lint` command; Direct Mode, AST parsing and live receipt/trace evidence are the available validation layers.

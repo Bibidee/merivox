@@ -17,7 +17,7 @@ Canonical assets are ballot composition integrity and immutable group choice his
 7. The organizer cannot manipulate the roster, quorum or choices after round creation.
 8. No one can finalize early, vote late, vote for a nonexistent option, or finalize twice.
 9. Tally conservation: sum of recorded votes equals count of distinct eligible votes.
-10. Read-only clients must never treat ACCEPTED as finalized execution.
+10. Read-only clients must never treat ACCEPTED as finalized execution; the UI distinguishes FINALIZED from VERIFIED application state.
 11. No private keys, signing seeds or backend authority are introduced.
 
 ## Adversarial cases
@@ -32,6 +32,8 @@ Canonical assets are ballot composition integrity and immutable group choice his
 - Validator divergence or no consensus, expiry without anyone operating a keeper.
 - Source/frontend contract ABI mismatch.
 - RPC data unavailable while the frontend is refreshing.
+- Duplicate questions and concurrent creators must resolve through the canonical transaction return value, never a question-text search.
+- A public round directory must paginate until the contract returns a short page; it must not silently stop at 25 records.
 
 ## Known risk
 

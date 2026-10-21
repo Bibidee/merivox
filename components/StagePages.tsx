@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, ArrowRight, BarChart3, CheckCircle2, Clock3, GitMerge, LockKeyhole, RefreshCw, Vote, WalletCards } from 'lucide-react';
 import { readChain, sendChain } from '@/lib/chain';
 import { contractConfigured } from '@/lib/config';
-import { asNumber, remaining, type AlignmentState, type Choice, type MemberStatus, type Nomination, type Result, type Round, type RoundStatus, type Tally } from '@/lib/model';
+import { asNumber, remaining, ROUND_RULES, type AlignmentState, type Choice, type MemberStatus, type Nomination, type Result, type Round, type RoundStatus, type Tally } from '@/lib/model';
 import { useApp } from './AppProviders';
 import { ChoiceMap } from './ChoiceMap';
 import { PhaseRibbon } from './PhaseRibbon';
@@ -67,7 +67,25 @@ export function StagePages({ stage }: { stage: Stage }) {
     setBusy(true); setError('');
     try {
       const wallet = await requireWallet();
-      await sendChain(wallet.account, wallet.provider, functionName, args, (phase, hash, detail) => updateTx(label, phase, hash, detail));
+      const before = round;
+      await sendChain(wallet.account, wallet.provider, functionName, args, (phase, hash, detail) => updateTx(label, phase, hash, detail), async () => {
+        const fresh = normalizeRound(await readChain<Round>('get_round', [id]));
+        if (functionName === 'nominate' && before && fresh.nomination_count <= before.nomination_count) throw new Error('nomination count did not advance');
+        if (functionName === 'begin_alignment' && fresh.status !== 'RECONCILING') throw new Error(`round read back as ${fresh.status}`);
+        if (functionName === 'reconcile_next' && before && fresh.alignment_cursor <= before.alignment_cursor && fresh.status !== 'BALLOT_READY') throw new Error('alignment cursor did not advance');
+        if (functionName === 'close_alignment' && fresh.status !== 'BALLOT_READY') throw new Error(`round read back as ${fresh.status}`);
+        if (functionName === 'open_ballot' && fresh.status !== 'VOTING') throw new Error(`round read back as ${fresh.status}`);
+        if (functionName === 'vote') {
+          if (!account) throw new Error('wallet account disappeared during verification');
+          const voter = normalizeMember(await readChain<MemberStatus>('get_member_status', [id, account]));
+          if (!voter.voted) throw new Error('vote was not visible in member state');
+        }
+        if (functionName === 'finalize') {
+          const final = normalizeResult(await readChain<Result>('get_result', [id]));
+          if (!final.finalized) throw new Error('result is not finalized in application state');
+        }
+        return `Application state verified: ${fresh.status}`;
+      });
       await reload();
     } catch (err) { setError(actionError(err)); }
     finally { setBusy(false); }
@@ -97,10 +115,14 @@ function AlignmentRoom({ round, nominations, choices, alignment, busy, now, onAc
   const pending = nominations.find(item => item.id === alignment?.pending_id);
   const deadline = alignment?.alignment_close ?? round.alignment_close;
   const canClose = round.status === 'RECONCILING' && now >= deadline;
+  const attemptsUsed = pending?.attempts ?? 0;
+  const attemptsRemaining = Math.max(0, ROUND_RULES.maxReconciliationAttempts - attemptsUsed);
+  const cooldownRemaining = pending?.last_attempt_at ? Math.max(0, pending.last_attempt_at + ROUND_RULES.reconciliationCooldownSeconds - now) : 0;
+  const canRetry = Boolean(pending && attemptsRemaining > 0 && cooldownRemaining === 0);
   return <>
     <div className="stage-alert"><LockKeyhole size={19} /><div><b>Canonical anchors are frozen as they are created.</b><p>Validators compare new submissions with those anchors. Disagreement or unavailable consensus never silently merges ideas.</p></div></div>
-    <div className="stage-control-row"><div><span className="section-kicker">RECONCILIATION PROGRESS</span><strong>{alignment?.cursor ?? round.alignment_cursor} / {alignment?.total ?? round.nomination_count} alternatives assigned</strong><p>{round.status === 'RECONCILING' ? remaining(deadline, now) + ' for alignment' : 'Round state: ' + readableStatus(round.status)}</p></div><div className="control-actions">{round.status === 'RECONCILING' && (canClose ? <button className="btn btn-dark" disabled={busy} onClick={() => void onAction('Close alignment', 'close_alignment', [round.id])}>Close with explicit fallbacks <ArrowRight size={16} /></button> : <button className="btn btn-dark" disabled={busy || !pending} onClick={() => void onAction('Reconcile next alternative', 'reconcile_next', [round.id])}>Reconcile next <GitMerge size={16} /></button>)}{round.status === 'BALLOT_READY' && <button className="btn btn-dark" disabled={busy} onClick={() => void onAction('Open canonical ballot', 'open_ballot', [round.id])}>Open ballot <ArrowRight size={16} /></button>}</div></div>
-    {pending && round.status === 'RECONCILING' && <div className="pending-card"><span className="section-kicker">NEXT PROPOSAL TICKET</span><h3>{pending.title}</h3><p>{pending.details}</p><small>Consensus attempt {pending.attempts + 1} of 3 · compared against canonical anchors</small></div>}
+    <div className="stage-control-row"><div><span className="section-kicker">RECONCILIATION PROGRESS</span><strong>{alignment?.cursor ?? round.alignment_cursor} / {alignment?.total ?? round.nomination_count} alternatives assigned</strong><p>{round.status === 'RECONCILING' ? remaining(deadline, now) + ' for alignment' : 'Round state: ' + readableStatus(round.status)}</p></div><div className="control-actions">{round.status === 'RECONCILING' && (canClose ? <button className="btn btn-dark" disabled={busy} onClick={() => void onAction('Close alignment', 'close_alignment', [round.id])}>Close with explicit fallbacks <ArrowRight size={16} /></button> : <button className="btn btn-dark" disabled={busy || !canRetry} onClick={() => void onAction('Reconcile next alternative', 'reconcile_next', [round.id])}>{cooldownRemaining > 0 ? `Cooldown ${cooldownRemaining}s` : attemptsRemaining === 0 ? 'Retry cap reached' : 'Reconcile next'} <GitMerge size={16} /></button>)}{round.status === 'BALLOT_READY' && <button className="btn btn-dark" disabled={busy} onClick={() => void onAction('Open canonical ballot', 'open_ballot', [round.id])}>Open ballot <ArrowRight size={16} /></button>}</div></div>
+    {pending && round.status === 'RECONCILING' && <div className="pending-card"><span className="section-kicker">NEXT PROPOSAL TICKET</span><h3>{pending.title}</h3><p>{pending.details}</p><small>{attemptsUsed} of {ROUND_RULES.maxReconciliationAttempts} attempts used · {attemptsRemaining} remaining{cooldownRemaining > 0 ? ` · retry available in ${cooldownRemaining}s` : ''} · compared against canonical anchors</small></div>}
     <ChoiceMap nominations={nominations} choices={choices} live />
     {round.status === 'BALLOT_READY' && <div className="feature-note"><CheckCircle2 size={20} /><div><h3>The ballot is ready to freeze.</h3><p>Opening the ballot makes these choices immutable for public one-wallet-one-vote participation.</p></div></div>}
     {round.status === 'VOTING' && <div className="feature-note"><Clock3 size={20} /><div><h3>Voting is open.</h3><p>The Choice Map remains the provenance for every ballot option.</p><Link href={'/ballot?id=' + encodeURIComponent(round.id)} className="text-arrow">Go to voting room <ArrowRight size={15} /></Link></div></div>}

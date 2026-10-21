@@ -1,15 +1,15 @@
-# MERIVOX V1 — completion handoff
+# MERIVOX V1 — remediation handoff
 
-The original handoff implementation has been completed, hardened and deployed. [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) is the detailed evidence ledger.
+This branch is the remediation release candidate. [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) separates historical production evidence from the release gates still required for this source.
 
 ## Current verified state
 
-- Premium Decision Studio frontend preserves Merivox identity and Choice Map semantics.
-- Direct, backendless contract reads and injected-wallet writes run on Studionet `61999`.
-- Immutable nominations, validator reconciliation, conservative unresolved fallback, frozen canonical ballot, one-wallet-one-vote tallying, quorum, tie and no-quorum outcomes are implemented.
-- Production deployment: [merivox.vercel.app](https://merivox.vercel.app).
-- Pinned Direct Mode suite: 8 passed. Live round `1`: four nominations, two public votes and a finalized tie.
-- A real injected wallet was not available in the browser test environment; signing a new round remains a human action.
+- Premium Decision Studio frontend and Choice Map identity are preserved.
+- This branch adds a contract/frontend reconciliation window, prompt/data hardening, canonical round-return handling, verified application readback and complete activity pagination.
+- Local TypeScript tests, lint, typecheck, build, static checks and Direct Mode tests pass after the remediation changes.
+- The committed branch is pushed to GitHub and tracked by [draft PR #1](https://github.com/Bibidee/merivox/pull/1); the Vercel preview deployment is READY and its route smoke checks pass.
+- Historical production remains at [merivox.vercel.app](https://merivox.vercel.app) until the new contract and branch are deployed.
+- A real injected wallet is a human approval dependency; no private key is accessed by the agent.
 
 ## Historical starter inventory (superseded)
 

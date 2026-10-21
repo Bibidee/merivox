@@ -9,7 +9,26 @@ export type RoundStatus =
   | 'CANCELLED';
 
 export type Judgment = 'EQUIVALENT' | 'DISTINCT' | 'AMBIGUOUS' | 'UNRESOLVED' | 'UNREVIEWED';
-export type TxPhase = 'IDLE' | 'SIGNING' | 'SUBMITTED' | 'ACCEPTED' | 'FINALIZED' | 'FAILED' | 'UNDETERMINED';
+export type TxPhase = 'IDLE' | 'SIGNING' | 'SUBMITTED' | 'ACCEPTED' | 'FINALIZED' | 'VERIFIED' | 'FAILED' | 'UNDETERMINED';
+
+export const ROUND_RULES = {
+  maxMembers: 25,
+  maxNominations: 8,
+  minCreationLeadSeconds: 600,
+  minVotingWindowSeconds: 900,
+  reconciliationCooldownSeconds: 60,
+  maxReconciliationAttempts: 3,
+  validatorExecutionGraceSeconds: 120,
+} as const;
+
+// The contract reserves enough time for every nomination to receive all
+// bounded attempts, including cooldowns and a conservative validator grace.
+export const MIN_ALIGNMENT_WINDOW_SECONDS = ROUND_RULES.maxNominations * (
+  ROUND_RULES.maxReconciliationAttempts * ROUND_RULES.reconciliationCooldownSeconds
+  + ROUND_RULES.validatorExecutionGraceSeconds
+);
+
+export const MIN_ROUND_AFTER_NOMINATION_SECONDS = MIN_ALIGNMENT_WINDOW_SECONDS + ROUND_RULES.minVotingWindowSeconds;
 
 export interface Round {
   id: string;

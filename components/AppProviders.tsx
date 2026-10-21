@@ -2,6 +2,7 @@
 import {createContext,useContext,useCallback,useEffect,useMemo,useState,type ReactNode} from 'react';
 import {CHAIN_HEX} from '@/lib/config';
 import {getInjected,ensureChain,type Eip1193} from '@/lib/wallet';
+import {recoverTransaction} from '@/lib/chain';
 import type {Transaction,TxPhase} from '@/lib/model';
 type Session={account:`0x${string}`|null;networkOK:boolean;provider:Eip1193|null;connecting:boolean;error:string;connect:()=>Promise<void>;disconnect:()=>void;switchChain:()=>Promise<void>;requireWallet:()=>Promise<{account:`0x${string}`;provider:Eip1193}>;transactions:Transaction[];updateTx:(label:string,phase:TxPhase,hash?:string,detail?:string)=>void;};
 const Ctx=createContext<Session|null>(null);
@@ -9,7 +10,7 @@ const KEY='merivox:recent-txs';
 function storeTx(items:Transaction[]){try{localStorage.setItem(KEY,JSON.stringify(items.slice(0,12)));}catch{}}
 export function AppProviders({children}:{children:ReactNode}){
  const[account,setAccount]=useState<`0x${string}`|null>(null),[networkOK,setNetworkOK]=useState(false),[provider,setProvider]=useState<Eip1193|null>(null),[connecting,setConnecting]=useState(false),[error,setError]=useState(''),[transactions,setTransactions]=useState<Transaction[]>([]);
- useEffect(()=>{const p=getInjected();setProvider(p);try{const data=localStorage.getItem(KEY);if(data){const saved=JSON.parse(data) as Transaction[];setTransactions(saved.map(t=>t.phase==='SUBMITTED'||t.phase==='ACCEPTED'?{...t,phase:'UNDETERMINED',detail:'Check the explorer and canonical state'}:t));}}catch{}
+ useEffect(()=>{const p=getInjected();setProvider(p);try{const data=localStorage.getItem(KEY);if(data){const saved=JSON.parse(data) as Transaction[];setTransactions(saved);void Promise.all(saved.filter(t=>t.hash.startsWith('0x')&&['SUBMITTED','ACCEPTED','UNDETERMINED'].includes(t.phase)).map(async t=>{try{return {hash:t.hash,...await recoverTransaction(t.hash)};}catch{return null;}})).then(updates=>{const byHash=new Map(updates.filter(Boolean).map(item=>[item!.hash,item!]));if(byHash.size===0)return;setTransactions(cur=>{const next=cur.map(item=>{const recovered=byHash.get(item.hash);return recovered?{...item,phase:recovered.phase,detail:recovered.detail,at:Date.now()}:item;});storeTx(next);return next;});});}}catch{}
  if(!p)return;let active=true;
  const refresh=async()=>{try{const ac=await p.request({method:'eth_accounts'}) as string[];const chain=String(await p.request({method:'eth_chainId'}));if(active){setAccount(ac?.[0] as `0x${string}`||null);setNetworkOK(chain.toLowerCase()===CHAIN_HEX);}}catch{}};
  const onAccounts=(a:unknown)=>setAccount((a as string[])?.[0] as `0x${string}`||null);
