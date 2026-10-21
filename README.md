@@ -6,7 +6,7 @@ Merivox is a backendless GenLayer application for forming more representative co
 
 ## Current status
 
-The release preserves the deployed decision-studio identity while extending it with a second, contract-enforced ActionGate for governed community announcements. Prior one-contract lifecycle evidence remains explicitly tied to that earlier source; the current release ledger records the new pair only after fresh Studionet and Vercel verification. The architecture remains backendless: the browser reads and writes both contracts directly through an injected EIP-1193 wallet.
+The release preserves the original decision-studio identity while extending it with a second, contract-enforced ActionGate for governed community announcements. The corrected pair has fresh Studionet grant and revoke lifecycle evidence, including finalized parent/child delivery, publication success, and post-revocation rejection. The architecture remains backendless: the browser reads and writes both contracts directly through an injected EIP-1193 wallet.
 
 | Area | Status |
 |---|---|
@@ -14,8 +14,8 @@ The release preserves the deployed decision-studio identity while extending it w
 | Guided decision creator and wallet gating | Implemented against the live contract ABI |
 | Validator-backed semantic reconciliation | Implemented with conservative uncertainty/fallback behavior |
 | Frozen ballot, voting, quorum and tie result | Implemented and covered by Direct Mode tests |
-| Historical Studionet lifecycle evidence | Live round `1` finalized a tie; later validator calls required explicit fallback |
-| Remediation release | Deployed with exact source parity; live alignment, voting and terminal result evidence recorded |
+| Current Studionet lifecycle evidence | Corrected pair demonstrates live grant and revoke rounds, validator-backed `DISTINCT`/`EQUIVALENT`, finalized child delivery and publication controls |
+| Remediation release | Deployed with exact source hashes; current pair and all significant receipts are recorded in `docs/LIVE_EVIDENCE.md` |
 | CI verification | Frontend preflight plus static, direct and cross-contract suites are required |
 
 ## Non-negotiable product definition

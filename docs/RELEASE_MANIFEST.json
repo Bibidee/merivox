@@ -7,20 +7,27 @@
     "cli": "genlayer@0.39.1"
   },
   "source": {
-    "commit": "pending-final-commit",
-    "merivoxSha256": "pending-live-parity",
-    "actionGateSha256": "pending-live-parity"
+    "implementationCommit": "38a2a8d84d7df26edafa5143ed4cf48268f0f1e3",
+    "merivoxSha256": "E4FEAA9896140A283A3B7A2A349BCB4D675A4F0C1540A6B129B832EC67EA7645",
+    "actionGateSha256": "A047D22FBD568B29ABBB949417FDBCFBD86DBC645D6D37EB9B16E2F0CD26A652"
   },
   "contracts": {
-    "merivox": "pending-deployment",
-    "merivoxActionGate": "pending-deployment"
+    "merivox": "0xe201A351b898D15eF8ACDfFF22f62aFabC834C3C",
+    "merivoxActionGate": "0x263c5bAE66CcFcc04bA3546C3fa191F573C5D46b"
   },
   "frontend": {
     "url": "https://merivox.vercel.app",
-    "deployment": "pending-current-release"
+    "deployment": "dpl_HguQZeewPHpU7EarDNQLaSS6NjnQ",
+    "status": "READY"
   },
   "verification": {
-    "ciRun": "pending-current-run",
-    "liveEvidence": "docs/LIVE_EVIDENCE.md"
+    "ciRun": "pending-final-push",
+    "liveEvidence": "docs/LIVE_EVIDENCE.md",
+    "grantRound": "1",
+    "revokeRound": "2",
+    "grantDispatchParent": "0xa1deb2aee1baa3739663878145e6de6858fa123bbea3c9df2854365fb783c14a",
+    "grantDispatchChild": "0x08005cf2cf35453aebe3bde21d6abdf181dab99dbe53164df951d48a9134b3ad",
+    "revokeDispatchParent": "0xf4e9e25a8993dd5043c6f5533bd491e771bdef69d0d6050c3249044fe726d66f",
+    "revokeDispatchChild": "0x1a6e175a11ba3edf3be2405d950fe96e5dcfa92d9206b7e5fc2b98713d553479"
   }
 }
