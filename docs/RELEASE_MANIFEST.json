@@ -21,7 +21,7 @@
     "status": "READY"
   },
   "verification": {
-    "ciRun": "pending-final-push",
+    "ciRun": "https://github.com/Bibidee/merivox/actions/runs/39670667483",
     "liveEvidence": "docs/LIVE_EVIDENCE.md",
     "grantRound": "1",
     "revokeRound": "2",

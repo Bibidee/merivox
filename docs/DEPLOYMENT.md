@@ -33,7 +33,7 @@ The live grant and revoke rounds each reached `DECIDED` with three votes and a t
 
 ## CI and tooling disclosure
 
-Local frontend checks, Direct Mode contract tests and the cross-contract suite pass. The pinned repository toolchain contains no separate `genvm-lint` executable, so the release uses Direct Mode execution, AST/static checks, contract schema inspection and live finalized receipt/readback verification instead. The final GitHub Actions run will be added after the evidence commit is pushed and the default branch is aligned.
+Local frontend checks, Direct Mode contract tests and the cross-contract suite pass. [Merivox CI #20](https://github.com/Bibidee/merivox/actions/runs/39670667483) passed on default-branch commit `42731ec1e20ee13874a9fd63c256c1d4fcfd2aac`. The pinned repository toolchain contains no separate `genvm-lint` executable, so the release uses Direct Mode execution, AST/static checks, contract schema inspection and live finalized receipt/readback verification instead.
 
 ## Historical releases
 

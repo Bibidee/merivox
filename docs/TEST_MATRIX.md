@@ -14,6 +14,6 @@
 | Browser E2E | Premium routes, Choice Map, community publisher view and governed action readback | Computer Use against `https://merivox.vercel.app` | Passing for tested routes |
 | Live Studionet grant | Grant, child application, authorized and unauthorized publication | `docs/LIVE_EVIDENCE.md`, round 1 | Passing |
 | Live Studionet revoke | Revoke, child application and revoked publication rejection | `docs/LIVE_EVIDENCE.md`, round 2 | Passing |
-| CI | Frontend and contract jobs on the submitted default branch | GitHub Actions run recorded after push | Pending final push |
+| CI | Frontend and contract jobs on the submitted default branch | [Merivox CI #20](https://github.com/Bibidee/merivox/actions/runs/39670667483), commit `42731ec1e20ee13874a9fd63c256c1d4fcfd2aac` | Passing |
 
 Mocked or compatible-runtime results are never represented as live GenLayer evidence. Every live claim includes a transaction hash, finality, canonical readback and source/deployment context.
