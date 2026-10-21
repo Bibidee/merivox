@@ -7,9 +7,9 @@ This branch is the remediation release candidate. [`docs/DEPLOYMENT.md`](docs/DE
 - Premium Decision Studio frontend and Choice Map identity are preserved.
 - This branch adds a contract/frontend reconciliation window, prompt/data hardening, canonical round-return handling, verified application readback and complete activity pagination.
 - Local TypeScript tests, lint, typecheck, build, static checks and Direct Mode tests pass after the remediation changes.
-- The committed branch is pushed to GitHub and tracked by [draft PR #1](https://github.com/Bibidee/merivox/pull/1); the Vercel preview deployment is READY and its route smoke checks pass.
-- Historical production remains at [merivox.vercel.app](https://merivox.vercel.app) until the new contract and branch are deployed.
-- A real injected wallet is a human approval dependency; no private key is accessed by the agent.
+- The committed branch is pushed to GitHub and tracked by [draft PR #1](https://github.com/Bibidee/merivox/pull/1); the current Vercel production deployment is READY and its route smoke checks pass.
+- The remediation contract is finalized on Studionet with byte-for-byte source parity; deployment details are in [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
+- A fresh browser lifecycle with live `EQUIVALENT`, `DISTINCT` and `AMBIGUOUS` evidence remains required before a READY verdict; no private key is accessed by the agent.
 
 ## Historical starter inventory (superseded)
 

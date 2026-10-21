@@ -4,7 +4,7 @@ This file separates the superseded production evidence from the remediation rele
 
 ## Release status
 
-The remediation branch `remediation/merivox-v1-submission` contains contract and frontend changes that require a new contract deployment. A Vercel preview has been built successfully from the committed branch, but production remains the historical release below until the new contract is finalized and source parity is verified. The release is not called READY on source-only evidence.
+The remediation branch `remediation/merivox-v1-submission` is now deployed to Studionet and Vercel production. Contract source parity is verified, but the release is not called READY until a fresh browser round proves all live validator classifications and the complete voting lifecycle.
 
 Preview deployment evidence:
 
@@ -12,7 +12,21 @@ Preview deployment evidence:
 - Preview URL: [merivox-509yp33qw-bibidees-projects.vercel.app](https://merivox-509yp33qw-bibidees-projects.vercel.app)
 - Vercel state: `READY`
 - Read-only route checks: `/`, `/new/`, `/activity/`, `/method/` returned HTTP 200 and contained Merivox content.
-- This preview still uses the historical contract environment value; it is not production source-parity evidence for the remediation contract.
+- The preview was an intermediate build before the final production address was configured.
+
+## Current remediation production release
+
+- Contract: `0x3810f4dF37c5B1C2B5d3C1d6d6a86A40c1171CE5`
+- Deployment transaction: [`0x51509ec31a1d52cf13fa3b44fe8031e9d3ff7f84f90aa38a6167285a686f3f97`](https://explorer-studio.genlayer.com/tx/0x51509ec31a1d52cf13fa3b44fe8031e9d3ff7f84f90aa38a6167285a686f3f97)
+- Deployment status: `FINALIZED`, result `MAJORITY_AGREE`, five validator receipts observed
+- Deployed source SHA-256: `F6B13D6E78442329BAE13C216B62CC9ADF28649AB5F9E832E725E371D6548CC5`
+- Local source SHA-256: `F6B13D6E78442329BAE13C216B62CC9ADF28649AB5F9E832E725E371D6548CC5`
+- Source comparison: exact byte-for-byte match, 31,660 bytes
+- Matching Git commit: `c3dcfcffed93896caf3aaf1e925bb75e8cc1ea43`
+- Vercel production deployment: `dpl_7u7jhytKWus4m3hWu7Av1Gi57y8h`, `READY`
+- Production alias: [merivox.vercel.app](https://merivox.vercel.app)
+- Production environment `NEXT_PUBLIC_MERIVOX_CONTRACT`: updated to the current contract address before deployment
+- Read-only production route checks: `/`, `/new/`, `/activity/`, `/method/` returned HTTP 200
 
 ## Binding network and tooling
 
@@ -51,12 +65,10 @@ The historical round remains valuable negative evidence: the chain receipts show
 
 ## Required release gates before a READY verdict
 
-1. Deploy this exact contract source through the wallet flow and record a new finalized Studionet deployment transaction and address.
-2. Update the Vercel production environment to that address and deploy this exact branch; verify Vercel READY status and production source parity.
-3. Create a fresh round through the production browser. The creator must approve each wallet transaction; no private key is accessed by the agent.
-4. Exercise live validator-backed alignment and record finalized receipts with genuine `EQUIVALENT`, `DISTINCT` and `AMBIGUOUS` classifications, including independent validator agreement/reproduction and prompt-injection data.
-5. Finish ballot opening, one-wallet voting, finalization and canonical result readback. Record transaction hashes and the final contract state.
-6. Run browser route, refresh, wrong-chain, rejected-signature, keyboard and mobile checks against the deployed release.
+1. Create a fresh round through the production browser. The creator must approve each wallet transaction; no private key is accessed by the agent.
+2. Exercise live validator-backed alignment and record finalized receipts with genuine `EQUIVALENT`, `DISTINCT` and `AMBIGUOUS` classifications, including independent validator agreement/reproduction and prompt-injection data.
+3. Finish ballot opening, one-wallet voting, finalization and canonical result readback. Record transaction hashes and the final contract state.
+4. Run browser route, refresh, wrong-chain, rejected-signature, keyboard and mobile checks against the deployed release.
 
 ## Honest limitations
 
