@@ -1223,7 +1223,7 @@ class Merivox(gl.Contract):
     @gl.public.view
     def get_current_authorization(self, space_id: str, recipient_wallet: str) -> dict:
         try:
-            recipient = Address(recipient_wallet).as_hex.lower()
+            recipient = recipient_wallet.as_hex.lower() if isinstance(recipient_wallet, Address) else Address(recipient_wallet).as_hex.lower()
         except Exception:
             return {'exists': False, 'version': 0, 'action_digest': ''}
         authorization = self.current_authorizations.get(self._authorization_key(space_id, recipient))

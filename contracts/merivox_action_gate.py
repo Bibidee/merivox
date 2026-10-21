@@ -75,6 +75,11 @@ class MerivoxActionGate(gl.Contract):
     def _sender(self) -> str:
         return gl.message.sender_address.as_hex.lower()
 
+    def _wallet_hex(self, wallet: str) -> str:
+        if isinstance(wallet, Address):
+            return wallet.as_hex.lower()
+        return Address(wallet).as_hex.lower()
+
     def _merivox(self):
         return gl.get_contract_at(self.authorized_merivox)
 
@@ -138,14 +143,13 @@ class MerivoxActionGate(gl.Contract):
         if not isinstance(space_id, str) or not space_id:
             raise gl.vm.UserError('Invalid community space')
         action_type = str(action_type).strip().upper()
-        recipient = str(recipient_wallet).strip().lower()
         scope = str(permission_scope).strip().upper()
         if action_type not in ('GRANT_PUBLISHER', 'REVOKE_PUBLISHER'):
             raise gl.vm.UserError('Invalid permission action')
         if scope != 'PUBLISHER':
             raise gl.vm.UserError('Invalid permission scope')
         try:
-            recipient = Address(recipient).as_hex.lower()
+            recipient = self._wallet_hex(recipient_wallet)
         except Exception:
             raise gl.vm.UserError('Invalid recipient wallet')
         now = self._timestamp()
@@ -239,7 +243,10 @@ class MerivoxActionGate(gl.Contract):
 
     @gl.public.view
     def get_permission(self, space_id: str, recipient_wallet: str) -> dict:
-        recipient = Address(recipient_wallet).as_hex.lower()
+        try:
+            recipient = self._wallet_hex(recipient_wallet)
+        except Exception:
+            raise gl.vm.UserError('Invalid recipient wallet')
         permission = self.permissions.get(self._permission_key(space_id, recipient))
         result = self._permission_dict(permission, self._timestamp())
         if result.get('exists'):
