@@ -22,6 +22,10 @@ jobs:
 
   contract:
     runs-on: ubuntu-latest
+    env:
+      # Pin the official GenVM manager release used by the Direct Mode loader.
+      # genlayer-test 0.30.0rc2 resolves the runner bundle from this project.
+      GENVM_VERSION: v0.6.0-rc3
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

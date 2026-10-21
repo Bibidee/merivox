@@ -16,6 +16,8 @@ DETAILS = 'A hands-on session with a defined deliverable, audience and schedule.
 def address(value: Any) -> str:
     if isinstance(value, bytes):
         return '0x' + value.hex()
+    if hasattr(value, 'as_hex'):
+        return value.as_hex.lower()
     return str(value)
 
 
