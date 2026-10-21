@@ -28,6 +28,26 @@ Preview deployment evidence:
 - Production environment `NEXT_PUBLIC_MERIVOX_CONTRACT`: updated to the current contract address before deployment
 - Read-only production route checks: `/`, `/new/`, `/activity/`, `/method/` returned HTTP 200
 
+### Fresh live lifecycle evidence (repository-local CLI, Studionet 61999)
+
+The following evidence was produced against the remediation contract with the unlocked repository-local GenLayer CLI `0.39.1`; no private key was read or exported.
+
+- Fresh lifecycle round: `3`
+- Create-round transaction: `0xdb47135771168504a65676d98fe3f27fb64177bd66d8f71e71ba617703efa198` — finalized `MAJORITY_AGREE`, five validator receipts
+- Four distinct unlocked member accounts submitted nominations; nomination transactions finalized with `MAJORITY_AGREE`:
+  - `0x1071ba474a4eadf8aede148b879713de67bc6eca918b64106122b5c25698f2ac`
+  - `0x11aa4420e364dbf6c4131312670d735ebfa7958d24ac0167dbaea3ed1efcd50f`
+  - `0xbe0cb57f1891564767466f0d2fe26f3826a6295a1e35ee9ef098035f44879ba2`
+  - `0x6f0d38069ad00894eb2115ae3d0312b4b6f8dd8642221840566719a1b97cc031`
+- Alignment start: `0xd8bb39186060d912227515ff2039e45199d1d341f0c2bac5a70c41a3746d4353`
+- Finalized validator-backed classifications:
+  - `0x8867b29aa61db05ac51c2b1de75ef8105da407cd431fbdb8403b0c5479928d56` — `EQUIVALENT`, merged into choice `1`
+  - `0x83ec8c61d48fbddeff1420308f23ab756ffdb76fe8746101730e6bc7eef5f9cc` — `DISTINCT`
+  - `0x0777ae54a19b6eff5fefff5c993242cab3c6fc5ce736dcda4eb009df6516ac0f` — `AMBIGUOUS`; the submitted text included a prompt-injection attempt and was stored as an uncertain choice
+- Ballot opening: `0x0a7b9260cf374c8c69a7ca0320b8cbd1bf9408fa3be463388f0b4846af1e63a8`
+- Four finalized votes produced a live tally of choice `1: 2`, choice `2: 1`, choice `3: 1`; `voter_count: 4`, `quorum: 1`.
+- Current on-chain state: `VOTING`. `finalize(3)` remains intentionally pending until the contract's configured ballot deadline; no terminal result is claimed before that deadline.
+
 ## Binding network and tooling
 
 - Network: GenLayer Studionet, chain `61999` (`0xf22f`)
@@ -65,10 +85,8 @@ The historical round remains valuable negative evidence: the chain receipts show
 
 ## Required release gates before a READY verdict
 
-1. Create a fresh round through the production browser. The creator must approve each wallet transaction; no private key is accessed by the agent.
-2. Exercise live validator-backed alignment and record finalized receipts with genuine `EQUIVALENT`, `DISTINCT` and `AMBIGUOUS` classifications, including independent validator agreement/reproduction and prompt-injection data.
-3. Finish ballot opening, one-wallet voting, finalization and canonical result readback. Record transaction hashes and the final contract state.
-4. Run browser route, refresh, wrong-chain, rejected-signature, keyboard and mobile checks against the deployed release.
+1. Finish the time-gated ballot with `finalize(3)` after the recorded ballot deadline, then capture terminal result and canonical result readback.
+2. Run browser route, refresh, wrong-chain, rejected-signature, keyboard and mobile checks against the deployed release.
 
 ## Honest limitations
 
