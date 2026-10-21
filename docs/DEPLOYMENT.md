@@ -8,8 +8,8 @@ The remediation branch `remediation/merivox-v1-submission` contains contract and
 
 Preview deployment evidence:
 
-- Vercel deployment: `dpl_7hyLi1HjufbzfoRP1rkTAgJi9vxN`
-- Preview URL: [merivox-4bgth3hn1-bibidees-projects.vercel.app](https://merivox-4bgth3hn1-bibidees-projects.vercel.app)
+- Vercel deployment: `dpl_BrpNWvP6msdN7aKz2diQj4tvJnDw`
+- Preview URL: [merivox-509yp33qw-bibidees-projects.vercel.app](https://merivox-509yp33qw-bibidees-projects.vercel.app)
 - Vercel state: `READY`
 - Read-only route checks: `/`, `/new/`, `/activity/`, `/method/` returned HTTP 200 and contained Merivox content.
 - This preview still uses the historical contract environment value; it is not production source-parity evidence for the remediation contract.
