@@ -9,7 +9,7 @@ This branch is the remediation release candidate. [`docs/DEPLOYMENT.md`](docs/DE
 - Local TypeScript tests, lint, typecheck, build, static checks and Direct Mode tests pass after the remediation changes.
 - The committed branch is pushed to GitHub and tracked by [draft PR #1](https://github.com/Bibidee/merivox/pull/1); the current Vercel production deployment is READY and its route smoke checks pass.
 - The remediation contract is finalized on Studionet with byte-for-byte source parity; deployment details are in [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
-- Fresh CLI lifecycle evidence is now recorded for live `EQUIVALENT`, `DISTINCT` and `AMBIGUOUS` classifications, including adversarial nomination data; the round is currently in time-gated `VOTING` with a finalized `2 / 1 / 1` tally. Terminal finalization and the remaining browser interaction checks are still required before a READY verdict; no private key is accessed by the agent.
+- Fresh CLI lifecycle evidence is now recorded for live `EQUIVALENT`, `DISTINCT` and `AMBIGUOUS` classifications, including adversarial nomination data; round 3 finalized as `DECIDED` with winner choice `1`, reason `UNIQUE_HIGHEST_TALLY`, and a finalized `2 / 1 / 1` tally. Remaining limitations are browser interaction coverage; no private key is accessed by the agent.
 
 ## Historical starter inventory (superseded)
 

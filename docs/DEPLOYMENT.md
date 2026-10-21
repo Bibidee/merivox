@@ -46,7 +46,8 @@ The following evidence was produced against the remediation contract with the un
   - `0x0777ae54a19b6eff5fefff5c993242cab3c6fc5ce736dcda4eb009df6516ac0f` — `AMBIGUOUS`; the submitted text included a prompt-injection attempt and was stored as an uncertain choice
 - Ballot opening: `0x0a7b9260cf374c8c69a7ca0320b8cbd1bf9408fa3be463388f0b4846af1e63a8`
 - Four finalized votes produced a live tally of choice `1: 2`, choice `2: 1`, choice `3: 1`; `voter_count: 4`, `quorum: 1`.
-- Current on-chain state: `VOTING`. `finalize(3)` remains intentionally pending until the contract's configured ballot deadline; no terminal result is claimed before that deadline.
+- Finalization transaction: `0x0947e360e74b4acb79473279913abab59f7a46d809eaae1d956bbabab715a566` — finalized `MAJORITY_AGREE`, five validator receipts, leader return `DECIDED`.
+- Final readback: `DECIDED`, winner choice `1`, reason `UNIQUE_HIGHEST_TALLY`, `finalized: true`, `voter_count: 4`.
 
 ## Binding network and tooling
 
@@ -85,8 +86,7 @@ The historical round remains valuable negative evidence: the chain receipts show
 
 ## Required release gates before a READY verdict
 
-1. Finish the time-gated ballot with `finalize(3)` after the recorded ballot deadline, then capture terminal result and canonical result readback.
-2. Run browser route, refresh, wrong-chain, rejected-signature, keyboard and mobile checks against the deployed release.
+1. Run the remaining browser refresh, wrong-chain, rejected-signature and mobile checks against the deployed release.
 
 ## Honest limitations
 

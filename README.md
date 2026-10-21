@@ -6,7 +6,7 @@ Merivox is a backendless GenLayer application for forming more representative co
 
 ## Current status
 
-The remediation release is deployed at [merivox.vercel.app](https://merivox.vercel.app) against a byte-for-byte verified Studionet contract. Fresh live CLI evidence now records genuine `EQUIVALENT`, `DISTINCT` and `AMBIGUOUS` validator classifications and four votes; the result remains pending the contract's time-gated ballot finalization and the remaining browser interaction checks. The architecture remains backendless: the browser reads and writes the contract directly through an injected EIP-1193 wallet.
+The remediation release is deployed at [merivox.vercel.app](https://merivox.vercel.app) against a byte-for-byte verified Studionet contract. Fresh live CLI evidence records genuine `EQUIVALENT`, `DISTINCT` and `AMBIGUOUS` validator classifications, four votes, and terminal `DECIDED` readback; remaining limitations are browser interaction coverage. The architecture remains backendless: the browser reads and writes the contract directly through an injected EIP-1193 wallet.
 
 | Area | Status |
 |---|---|
@@ -15,7 +15,7 @@ The remediation release is deployed at [merivox.vercel.app](https://merivox.verc
 | Validator-backed semantic reconciliation | Implemented with conservative uncertainty/fallback behavior |
 | Frozen ballot, voting, quorum and tie result | Implemented and covered by Direct Mode tests |
 | Historical Studionet lifecycle evidence | Live round `1` finalized a tie; later validator calls required explicit fallback |
-| Remediation release | Deployed with exact source parity; live alignment and voting evidence recorded, terminal finalization pending |
+| Remediation release | Deployed with exact source parity; live alignment, voting and terminal result evidence recorded |
 
 ## Non-negotiable product definition
 
