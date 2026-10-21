@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, BarChart3, CheckCircle2, Clock3, GitMerge, LockK
 import { readChain, sendChain } from '@/lib/chain';
 import { contractConfigured } from '@/lib/config';
 import { asNumber, remaining, ROUND_RULES, type AlignmentState, type Choice, type MemberStatus, type Nomination, type Result, type Round, type RoundStatus, type Tally } from '@/lib/model';
+import { verifyReconciliationReadback } from '@/lib/verification';
 import { useApp } from './AppProviders';
 import { ChoiceMap } from './ChoiceMap';
 import { PhaseRibbon } from './PhaseRibbon';
@@ -16,6 +17,10 @@ type Stage = 'align' | 'ballot' | 'outcome';
 function normalizeRound(value: Round): Round {
   const raw = value as unknown as Record<string, unknown>;
   return { ...value, status: String(raw.status ?? 'NOMINATING') as RoundStatus, members: Array.isArray(raw.members) ? raw.members.map(String) : [], nomination_ids: Array.isArray(raw.nomination_ids) ? raw.nomination_ids.map(String) : [], choice_ids: Array.isArray(raw.choice_ids) ? raw.choice_ids.map(String) : [], tie_choice_ids: Array.isArray(raw.tie_choice_ids) ? raw.tie_choice_ids.map(String) : [], member_count: asNumber(raw.member_count), quorum: asNumber(raw.quorum), nomination_close: asNumber(raw.nomination_close), alignment_close: asNumber(raw.alignment_close), ballot_close: asNumber(raw.ballot_close), created_at: asNumber(raw.created_at), ballot_opened_at: asNumber(raw.ballot_opened_at), finalized_at: asNumber(raw.finalized_at), alignment_cursor: asNumber(raw.alignment_cursor), voter_count: asNumber(raw.voter_count), nomination_count: asNumber(raw.nomination_count), choice_count: asNumber(raw.choice_count), last_alignment_at: asNumber(raw.last_alignment_at), winner_choice_id: String(raw.winner_choice_id ?? ''), result_reason: String(raw.result_reason ?? '') };
+}
+function normalizeNomination(value: Nomination): Nomination {
+  const raw = value as unknown as Record<string, unknown>;
+  return { ...value, id: String(raw.id ?? ''), round_id: String(raw.round_id ?? ''), author: String(raw.author ?? ''), title: String(raw.title ?? ''), details: String(raw.details ?? ''), audience: String(raw.audience ?? ''), delivery: String(raw.delivery ?? ''), timing: String(raw.timing ?? ''), choice_id: String(raw.choice_id ?? ''), judgment: String(raw.judgment ?? 'UNREVIEWED') as Nomination['judgment'], attempts: asNumber(raw.attempts), last_attempt_at: asNumber(raw.last_attempt_at), last_error: String(raw.last_error ?? ''), created_at: asNumber(raw.created_at) };
 }
 function normalizeAlignment(value: AlignmentState): AlignmentState { const raw = value as unknown as Record<string, unknown>; return { status: String(raw.status ?? 'NOMINATING') as RoundStatus, cursor: asNumber(raw.cursor), total: asNumber(raw.total), pending_id: String(raw.pending_id ?? ''), alignment_close: asNumber(raw.alignment_close), last_alignment_at: asNumber(raw.last_alignment_at), last_judgment: String(raw.last_judgment ?? '') }; }
 function normalizeMember(value: MemberStatus): MemberStatus { const raw = value as unknown as Record<string, unknown>; return { eligible: Boolean(raw.eligible), nominated: Boolean(raw.nominated), voted: Boolean(raw.voted), choice_id: String(raw.choice_id ?? '') }; }
@@ -45,7 +50,7 @@ export function StagePages({ stage }: { stage: Stage }) {
     try {
       const next = normalizeRound(await readChain<Round>('get_round', [id]));
       const [nextNominations, nextChoices] = await Promise.all([
-        Promise.all(next.nomination_ids.map(nominationId => readChain<Nomination>('get_alternative', [nominationId]))),
+        Promise.all(next.nomination_ids.map(async nominationId => normalizeNomination(await readChain<Nomination>('get_alternative', [nominationId])))),
         Promise.all(next.choice_ids.map(choiceId => readChain<Choice>('get_choice', [choiceId]))),
       ]);
       setRound(next); setNominations(nextNominations); setChoices(nextChoices);
@@ -68,11 +73,17 @@ export function StagePages({ stage }: { stage: Stage }) {
     try {
       const wallet = await requireWallet();
       const before = round;
+      const beforePendingId = functionName === 'reconcile_next' && before ? before.nomination_ids[before.alignment_cursor] : '';
+      const beforePending = beforePendingId ? normalizeNomination(await readChain<Nomination>('get_alternative', [beforePendingId])) : null;
       await sendChain(wallet.account, wallet.provider, functionName, args, (phase, hash, detail) => updateTx(label, phase, hash, detail), async () => {
         const fresh = normalizeRound(await readChain<Round>('get_round', [id]));
         if (functionName === 'nominate' && before && fresh.nomination_count <= before.nomination_count) throw new Error('nomination count did not advance');
         if (functionName === 'begin_alignment' && fresh.status !== 'RECONCILING') throw new Error(`round read back as ${fresh.status}`);
-        if (functionName === 'reconcile_next' && before && fresh.alignment_cursor <= before.alignment_cursor && fresh.status !== 'BALLOT_READY') throw new Error('alignment cursor did not advance');
+        if (functionName === 'reconcile_next') {
+          const pendingId = fresh.nomination_ids[fresh.alignment_cursor];
+          const pending = pendingId ? normalizeNomination(await readChain<Nomination>('get_alternative', [pendingId])) : null;
+          return verifyReconciliationReadback(before, fresh, beforePending, pending);
+        }
         if (functionName === 'close_alignment' && fresh.status !== 'BALLOT_READY') throw new Error(`round read back as ${fresh.status}`);
         if (functionName === 'open_ballot' && fresh.status !== 'VOTING') throw new Error(`round read back as ${fresh.status}`);
         if (functionName === 'vote') {

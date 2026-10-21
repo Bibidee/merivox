@@ -10,7 +10,7 @@
     "build": "next build",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "tsx --test tests/model.test.ts tests/network.test.ts tests/rounds.test.ts tests/chain.test.ts",
+    "test": "tsx --test tests/model.test.ts tests/network.test.ts tests/rounds.test.ts tests/chain.test.ts tests/verification.test.ts",
     "network:check": "node scripts/network-check.mjs",
     "cli": "genlayer",
     "preflight": "npm run network:check && npm run typecheck && npm run lint && npm run test && npm run build"
