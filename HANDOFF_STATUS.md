@@ -1,6 +1,6 @@
 # MERIVOX V1 — remediation handoff
 
-This branch is the remediation release candidate. [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) separates historical production evidence from the release gates still required for this source.
+This branch is the remediation release candidate. The current verdict is `READY WITH DISCLOSED LIMITATIONS`; [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) contains the complete evidence ledger.
 
 ## Current verified state
 
@@ -9,7 +9,13 @@ This branch is the remediation release candidate. [`docs/DEPLOYMENT.md`](docs/DE
 - Local TypeScript tests, lint, typecheck, build, static checks and Direct Mode tests pass after the remediation changes.
 - The committed branch is pushed to GitHub and tracked by [draft PR #1](https://github.com/Bibidee/merivox/pull/1); the current Vercel production deployment is READY and its route smoke checks pass.
 - The remediation contract is finalized on Studionet with byte-for-byte source parity; deployment details are in [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
-- Fresh CLI lifecycle evidence is now recorded for live `EQUIVALENT`, `DISTINCT` and `AMBIGUOUS` classifications, including adversarial nomination data; round 3 finalized as `DECIDED` with winner choice `1`, reason `UNIQUE_HIGHEST_TALLY`, and a finalized `2 / 1 / 1` tally. Remaining limitations are browser interaction coverage; no private key is accessed by the agent.
+- Fresh CLI lifecycle evidence is now recorded for live `EQUIVALENT`, `DISTINCT` and `AMBIGUOUS` classifications, including adversarial nomination data; round 3 finalized as `DECIDED` with winner choice `1`, reason `UNIQUE_HIGHEST_TALLY`, and a finalized `2 / 1 / 1` tally. GitHub Actions run [#14](https://github.com/Bibidee/merivox/actions/runs/39574133617) passed both contract and frontend jobs. Production browser route/readback, connect/disconnect, wrong-chain detection and switching to chain 61999 were also verified; no private key is accessed by the agent.
+
+## Final browser coverage disclosure
+
+- Verified: all production routes, new-round form progression, activity search/filtering, round/Choice Map readback, ballot tally, outcome readback, wallet connect/disconnect/reconnect, wrong-network warning and Studionet switching.
+- Not exercised: account switching, rejected signatures, refresh/recovery or duplicate prevention during an in-flight transaction, and mobile viewport behavior. These are disclosed limitations because round 3 was already terminal and no new write transaction was repeated only to create test states.
+- The hosted RPC produced transient fetch errors on first ballot/outcome reads; the visible Retry flow recovered both pages.
 
 ## Historical starter inventory (superseded)
 

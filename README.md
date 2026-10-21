@@ -6,7 +6,7 @@ Merivox is a backendless GenLayer application for forming more representative co
 
 ## Current status
 
-The remediation release is deployed at [merivox.vercel.app](https://merivox.vercel.app) against a byte-for-byte verified Studionet contract. Fresh live CLI evidence records genuine `EQUIVALENT`, `DISTINCT` and `AMBIGUOUS` validator classifications, four votes, and terminal `DECIDED` readback; remaining limitations are browser interaction coverage. The architecture remains backendless: the browser reads and writes the contract directly through an injected EIP-1193 wallet.
+The remediation release is deployed at [merivox.vercel.app](https://merivox.vercel.app) against a byte-for-byte verified Studionet contract. Fresh live CLI evidence records genuine `EQUIVALENT`, `DISTINCT` and `AMBIGUOUS` validator classifications, four votes, and terminal `DECIDED` readback. Production browser route/readback and core wallet-network states are verified; the release verdict is `READY WITH DISCLOSED LIMITATIONS` for unexercised account-switch, rejected-signature, in-flight recovery/duplicate and mobile cases. The architecture remains backendless: the browser reads and writes the contract directly through an injected EIP-1193 wallet.
 
 | Area | Status |
 |---|---|
@@ -16,6 +16,7 @@ The remediation release is deployed at [merivox.vercel.app](https://merivox.verc
 | Frozen ballot, voting, quorum and tie result | Implemented and covered by Direct Mode tests |
 | Historical Studionet lifecycle evidence | Live round `1` finalized a tie; later validator calls required explicit fallback |
 | Remediation release | Deployed with exact source parity; live alignment, voting and terminal result evidence recorded |
+| CI verification | GitHub Actions run [#14](https://github.com/Bibidee/merivox/actions/runs/39574133617) passed contract and frontend jobs |
 
 ## Non-negotiable product definition
 
@@ -73,7 +74,7 @@ python -m pip install -r requirements-dev.txt
 python -m pytest tests
 ```
 
-The Direct Mode suite uses the pinned `genlayer-py==0.16.3` and `genlayer-test==0.29.2` environment. Run it with Python 3.12 or newer where those packages are available.
+The Direct Mode suite uses `genlayer-py==0.19.0rc2`, `genlayer-test==0.30.0rc2` and the official GenVM manager runner `v0.6.0-rc3` (the same versions pinned by CI). Run it with Python 3.12 or newer where those packages are available.
 
 For local development, copy `.env.example` to `.env.local` and set the final address:
 

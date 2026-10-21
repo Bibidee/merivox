@@ -4,7 +4,9 @@ This file separates the superseded production evidence from the remediation rele
 
 ## Release status
 
-The remediation branch `remediation/merivox-v1-submission` is now deployed to Studionet and Vercel production. Contract source parity is verified, but the release is not called READY until a fresh browser round proves all live validator classifications and the complete voting lifecycle.
+Verdict: `READY WITH DISCLOSED LIMITATIONS`.
+
+The remediation branch `remediation/merivox-v1-submission` is deployed to Studionet and Vercel production. Contract source parity, the complete live lifecycle, the production browser read path and both CI jobs are verified. No new live transaction was submitted during browser verification because round 3 is already terminal.
 
 Preview deployment evidence:
 
@@ -49,6 +51,27 @@ The following evidence was produced against the remediation contract with the un
 - Finalization transaction: `0x0947e360e74b4acb79473279913abab59f7a46d809eaae1d956bbabab715a566` — finalized `MAJORITY_AGREE`, five validator receipts, leader return `DECIDED`.
 - Final readback: `DECIDED`, winner choice `1`, reason `UNIQUE_HIGHEST_TALLY`, `finalized: true`, `voter_count: 4`.
 
+### CI verification
+
+- Fix commit: `ece81bff464a23c4f0b3430ac9cf96193e154b7e`
+- Workflow run: [Merivox CI #14](https://github.com/Bibidee/merivox/actions/runs/39574133617)
+- Contract job: `success`; Direct Mode static and contract suite `9 passed`
+- Frontend job: `success`; `npm run preflight` passed
+- The failed artifact lookup was corrected by pinning `genlayer-py==0.19.0rc2`, `genlayer-test==0.30.0rc2` and the official GenVM manager runner `v0.6.0-rc3`. The Direct Mode compatibility adapter preserves storage-backed contracts, calldata, sender changes and validator replay under that runner.
+
+### Production browser verification
+
+Computer Use verification was performed against [merivox.vercel.app](https://merivox.vercel.app) on Studionet 61999:
+
+- `/`, `/new`, `/activity`, `/method`, `/round?id=3`, `/align?id=3`, `/ballot?id=3` and `/outcome?id=3` loaded the Merivox experience and contract-backed content.
+- The new-round flow accepted a decision question and continued to the roster step without submitting a transaction.
+- Activity search and the `Finalized` filter narrowed the live directory correctly to round 3.
+- Round 3 showed 4 eligible wallets, 4 alternatives, 3 choices, 4 votes and `DECIDED` status.
+- The Choice Map showed the live `EQUIVALENT`, `DISTINCT` and uncertain `AMBIGUOUS` classifications, including the adversarial nomination as uncertain data.
+- Ballot readback showed the live `2 / 1 / 1` tally and completion state; outcome readback showed winner choice 1 and `UNIQUE HIGHEST TALLY`.
+- A transient RPC `Failed to fetch` state appeared on initial ballot/outcome reads; the visible Retry action followed by a short wait recovered both pages without a code change.
+- Wallet UI behavior verified: connected state, disconnect, reconnect, wrong-network warning, and switching to Studionet 61999. No private key was read or exported.
+
 ## Binding network and tooling
 
 - Network: GenLayer Studionet, chain `61999` (`0xf22f`)
@@ -84,12 +107,10 @@ The historical round remains valuable negative evidence: the chain receipts show
 - Automated suites run locally: TypeScript tests, lint, typecheck, build, static contract checks and Direct Mode contract tests.
 - GitHub Actions workflow: `.github/workflows/ci.yml` runs frontend preflight and pinned Direct Mode tests on pushes and pull requests.
 
-## Required release gates before a READY verdict
-
-1. Run the remaining browser refresh, wrong-chain, rejected-signature and mobile checks against the deployed release.
-
 ## Honest limitations
 
 - The historical deployment is not source-parity evidence for the remediation branch.
 - A browser wallet signature is a human approval step and cannot be completed without the user’s wallet.
+- Account switching, rejected-signature behavior, refresh/recovery during an in-flight transaction, duplicate-submission prevention during an in-flight transaction, and mobile viewport behavior were not exercised in this pass. They remain disclosed browser-coverage limitations; no live write was repeated solely to manufacture those states.
+- The browser’s first ballot/outcome read can show a transient RPC fetch error on the hosted Studionet endpoint; the tested Retry flow recovered the pages.
 - The repository-local CLI has no separate `genvm-lint` command; Direct Mode, AST parsing and live receipt/trace evidence are the available validation layers.
