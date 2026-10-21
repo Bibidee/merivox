@@ -2,7 +2,7 @@
 
 ## Architecture
 
-Browser-served Next.js App Router static export → injected EIP-1193 wallet → GenLayer Studionet 61999 → one Python Intelligent Contract → validator semantic judgment and deterministic storage → direct contract reads → browser-rendered result.
+Browser-served Next.js App Router static export → injected EIP-1193 wallet → GenLayer Studionet 61999 → Merivox Intelligent Contract plus MerivoxActionGate → validator semantic judgment, deterministic storage and finalized cross-contract dispatch → direct contract reads → browser-rendered result.
 
 No custom server, hosted database, API route, server action deciding outcomes, indexing authority, cron, external AI proxy or private-key-managed service. Local storage may remember transaction hashes or UI preferences only; canonical data comes from finalized contract state.
 
@@ -24,6 +24,7 @@ The Choice Map shows separate participant nominations becoming canonical choices
 - `/outcome?id=123`: Deterministic tally, quorum, tie and provenance replay.
 - `/activity`: List actual public rounds from contract.
 - `/method`: Transparent semantics and trust limitations.
+- `/community`: immutable community spaces, canonical publisher permission reads and append-only ActionGate announcements.
 
 The query-parameter pattern supports static export; browser reads do not rely on runtime Next server dynamic routes. Production navigation must restore full state on refresh.
 
@@ -36,6 +37,7 @@ The query-parameter pattern supports static export; browser reads do not rely on
 5. Chain-backed voting, alignment and outcome components; no fabricated example data in live views.
 6. Responsive 320px to ultrawide layouts; semantic contrast, keyboard focus, reduced motion and no horizontal overflow.
 7. Proper WCAG-oriented testing, automated browser coverage, and source parity against deployed contract.
+8. Cross-contract child transaction status must be read from ActionGate; a finalized Merivox parent is not treated as a successfully applied child action.
 
 ## Verification state
 

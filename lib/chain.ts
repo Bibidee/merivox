@@ -8,14 +8,18 @@ import type { TxPhase } from './model';
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const client = () => createClient({ chain: studionet });
 
-export async function readChain<T>(functionName: string, args: unknown[] = []): Promise<T> {
-  if (!contractConfigured()) throw new Error('Contract is not deployed/configured yet.');
+export async function readChainAt<T>(address: `0x${string}`, functionName: string, args: unknown[] = []): Promise<T> {
   return await client().readContract({
-    address: CONTRACT_ADDRESS,
+    address,
     functionName,
     args: args as never,
     jsonSafeReturn: true,
   }) as T;
+}
+
+export async function readChain<T>(functionName: string, args: unknown[] = []): Promise<T> {
+  if (!contractConfigured()) throw new Error('Contract is not deployed/configured yet.');
+  return readChainAt(CONTRACT_ADDRESS, functionName, args);
 }
 
 function transactionState(tx: GenLayerTransaction | null | undefined) {
@@ -57,23 +61,23 @@ export async function recoverTransaction(hash: string): Promise<{ phase: TxPhase
  * intentionally exposed as provisional; callers reread contract state only
  * after this function reports FINALIZED.
  */
-export async function sendChain(
+export async function sendChainAt(
   account: `0x${string}`,
   provider: Eip1193,
   functionName: string,
   args: unknown[],
   update: (phase: TxPhase, hash?: string, detail?: string) => void,
   verify?: ApplicationVerifier,
+  targetAddress: `0x${string}` = CONTRACT_ADDRESS,
 ) {
-  if (!contractConfigured()) throw new Error('No deployed contract is configured.');
-  const key = `${functionName}:${argumentKey(args)}`;
+  const key = `${targetAddress}:${functionName}:${argumentKey(args)}`;
   if (activeWrites.has(key)) throw new Error('This exact transaction is already in progress. Check transaction activity before retrying.');
   activeWrites.add(key);
   try {
     update('SIGNING');
     const instance = createClient({ chain: studionet, account, provider: provider as never });
     const hash = String(await instance.writeContract({
-      address: CONTRACT_ADDRESS,
+      address: targetAddress,
       functionName,
       args: args as never,
       value: BigInt(0),
@@ -133,4 +137,16 @@ export async function sendChain(
   } finally {
     activeWrites.delete(key);
   }
+}
+
+export async function sendChain(
+  account: `0x${string}`,
+  provider: Eip1193,
+  functionName: string,
+  args: unknown[],
+  update: (phase: TxPhase, hash?: string, detail?: string) => void,
+  verify?: ApplicationVerifier,
+) {
+  if (!contractConfigured()) throw new Error('No deployed contract is configured.');
+  return sendChainAt(account, provider, functionName, args, update, verify, CONTRACT_ADDRESS);
 }

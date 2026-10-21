@@ -1,0 +1,26 @@
+{
+  "project": "merivox",
+  "network": {
+    "name": "GenLayer Studionet",
+    "chainId": 61999,
+    "rpc": "https://studio.genlayer.com/api",
+    "cli": "genlayer@0.39.1"
+  },
+  "source": {
+    "commit": "pending-final-commit",
+    "merivoxSha256": "pending-live-parity",
+    "actionGateSha256": "pending-live-parity"
+  },
+  "contracts": {
+    "merivox": "pending-deployment",
+    "merivoxActionGate": "pending-deployment"
+  },
+  "frontend": {
+    "url": "https://merivox.vercel.app",
+    "deployment": "pending-current-release"
+  },
+  "verification": {
+    "ciRun": "pending-current-run",
+    "liveEvidence": "docs/LIVE_EVIDENCE.md"
+  }
+}

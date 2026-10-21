@@ -19,6 +19,10 @@ Canonical assets are ballot composition integrity and immutable group choice his
 9. Tally conservation: sum of recorded votes equals count of distinct eligible votes.
 10. Read-only clients must never treat ACCEPTED as finalized execution; the UI distinguishes FINALIZED from VERIFIED application state.
 11. No private keys, signing seeds or backend authority are introduced.
+12. A wallet cannot call ActionGate's permission mutation as if it were Merivox; immediate caller authentication is enforced in the gate.
+13. A stale, replayed, duplicate or superseded authorization cannot overwrite the current publisher permission.
+14. An announcement is append-only, bounded, and publishable only while the canonical grant version remains effective.
+15. Merivox and ActionGate are reciprocally bound once at deployment; no later admin rebinding exists.
 
 ## Adversarial cases
 
@@ -34,6 +38,7 @@ Canonical assets are ballot composition integrity and immutable group choice his
 - RPC data unavailable while the frontend is refreshing.
 - Duplicate questions and concurrent creators must resolve through the canonical transaction return value, never a question-text search.
 - A public round directory must paginate until the contract returns a short page; it must not silently stop at 25 records.
+- Forged child messages, origin/sender confusion, stale grant replay, expiry-boundary abuse and ActionGate-to-Merivox binding mismatch.
 
 ## Known risk
 

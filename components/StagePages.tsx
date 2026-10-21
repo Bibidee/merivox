@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, ArrowRight, BarChart3, CheckCircle2, Clock3, GitMerge, LockKeyhole, RefreshCw, Vote, WalletCards } from 'lucide-react';
 import { readChain, sendChain } from '@/lib/chain';
 import { contractConfigured } from '@/lib/config';
-import { asNumber, remaining, ROUND_RULES, type AlignmentState, type Choice, type MemberStatus, type Nomination, type Result, type Round, type RoundStatus, type Tally } from '@/lib/model';
+import { asNumber, remaining, ROUND_RULES, type AlignmentState, type BindingAuthorization, type Choice, type MemberStatus, type Nomination, type Result, type Round, type RoundStatus, type Tally } from '@/lib/model';
 import { verifyReconciliationReadback } from '@/lib/verification';
 import { useApp } from './AppProviders';
 import { ChoiceMap } from './ChoiceMap';
@@ -16,7 +16,7 @@ type Stage = 'align' | 'ballot' | 'outcome';
 
 function normalizeRound(value: Round): Round {
   const raw = value as unknown as Record<string, unknown>;
-  return { ...value, status: String(raw.status ?? 'NOMINATING') as RoundStatus, members: Array.isArray(raw.members) ? raw.members.map(String) : [], nomination_ids: Array.isArray(raw.nomination_ids) ? raw.nomination_ids.map(String) : [], choice_ids: Array.isArray(raw.choice_ids) ? raw.choice_ids.map(String) : [], tie_choice_ids: Array.isArray(raw.tie_choice_ids) ? raw.tie_choice_ids.map(String) : [], member_count: asNumber(raw.member_count), quorum: asNumber(raw.quorum), nomination_close: asNumber(raw.nomination_close), alignment_close: asNumber(raw.alignment_close), ballot_close: asNumber(raw.ballot_close), created_at: asNumber(raw.created_at), ballot_opened_at: asNumber(raw.ballot_opened_at), finalized_at: asNumber(raw.finalized_at), alignment_cursor: asNumber(raw.alignment_cursor), voter_count: asNumber(raw.voter_count), nomination_count: asNumber(raw.nomination_count), choice_count: asNumber(raw.choice_count), last_alignment_at: asNumber(raw.last_alignment_at), winner_choice_id: String(raw.winner_choice_id ?? ''), result_reason: String(raw.result_reason ?? '') };
+  return { ...value, status: String(raw.status ?? 'NOMINATING') as RoundStatus, members: Array.isArray(raw.members) ? raw.members.map(String) : [], nomination_ids: Array.isArray(raw.nomination_ids) ? raw.nomination_ids.map(String) : [], choice_ids: Array.isArray(raw.choice_ids) ? raw.choice_ids.map(String) : [], tie_choice_ids: Array.isArray(raw.tie_choice_ids) ? raw.tie_choice_ids.map(String) : [], member_count: asNumber(raw.member_count), quorum: asNumber(raw.quorum), nomination_close: asNumber(raw.nomination_close), alignment_close: asNumber(raw.alignment_close), ballot_close: asNumber(raw.ballot_close), created_at: asNumber(raw.created_at), ballot_opened_at: asNumber(raw.ballot_opened_at), finalized_at: asNumber(raw.finalized_at), alignment_cursor: asNumber(raw.alignment_cursor), voter_count: asNumber(raw.voter_count), nomination_count: asNumber(raw.nomination_count), choice_count: asNumber(raw.choice_count), last_alignment_at: asNumber(raw.last_alignment_at), winner_choice_id: String(raw.winner_choice_id ?? ''), result_reason: String(raw.result_reason ?? ''), binding: Boolean(raw.binding), space_id: String(raw.space_id ?? ''), action_status: String(raw.action_status ?? 'NOT_AUTHORIZED') };
 }
 function normalizeNomination(value: Nomination): Nomination {
   const raw = value as unknown as Record<string, unknown>;
@@ -26,6 +26,7 @@ function normalizeAlignment(value: AlignmentState): AlignmentState { const raw =
 function normalizeMember(value: MemberStatus): MemberStatus { const raw = value as unknown as Record<string, unknown>; return { eligible: Boolean(raw.eligible), nominated: Boolean(raw.nominated), voted: Boolean(raw.voted), choice_id: String(raw.choice_id ?? '') }; }
 function normalizeTally(value: Tally): Tally { const raw = value as unknown as Record<string, unknown>; const items = Array.isArray(raw.items) ? raw.items as Array<Record<string, unknown>> : []; return { items: items.map(item => ({ choice_id: String(item.choice_id ?? ''), votes: asNumber(item.votes), nomination_ids: Array.isArray(item.nomination_ids) ? item.nomination_ids.map(String) : [] })), voter_count: asNumber(raw.voter_count), quorum: asNumber(raw.quorum) }; }
 function normalizeResult(value: Result): Result { const raw = value as unknown as Record<string, unknown>; return { finalized: Boolean(raw.finalized), status: String(raw.status ?? 'NOMINATING') as RoundStatus, winner_choice_id: String(raw.winner_choice_id ?? ''), tie_choice_ids: Array.isArray(raw.tie_choice_ids) ? raw.tie_choice_ids.map(String) : [], voter_count: asNumber(raw.voter_count), quorum: asNumber(raw.quorum), finalized_at: asNumber(raw.finalized_at), reason: String(raw.reason ?? '') }; }
+function normalizeBindingAction(value: Record<string, unknown>): BindingAuthorization { return { exists: Boolean(value.exists), round_id: String(value.round_id ?? ''), space_id: String(value.space_id ?? ''), action_type: String(value.action_type ?? ''), recipient_wallet: String(value.recipient_wallet ?? ''), permission_scope: String(value.permission_scope ?? ''), expires_at: asNumber(value.expires_at), action_digest: String(value.action_digest ?? ''), version: asNumber(value.version), finalized_at: asNumber(value.finalized_at), lifecycle: String(value.lifecycle ?? 'NOT_AUTHORIZED'), dispatched_at: asNumber(value.dispatched_at), applied_at: asNumber(value.applied_at), last_error: String(value.last_error ?? ''), action_status: String(value.action_status ?? 'NOT_AUTHORIZED') }; }
 function actionError(error: unknown) { return error instanceof Error ? error.message : 'The transaction could not be completed.'; }
 function readableStatus(status: string) { return status.replaceAll('_', ' '); }
 
@@ -39,6 +40,7 @@ export function StagePages({ stage }: { stage: Stage }) {
   const [member, setMember] = useState<MemberStatus | null>(null);
   const [tally, setTally] = useState<Tally | null>(null);
   const [result, setResult] = useState<Result | null>(null);
+  const [bindingAction, setBindingAction] = useState<BindingAuthorization | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -62,6 +64,7 @@ export function StagePages({ stage }: { stage: Stage }) {
       if (stage === 'outcome') {
         setTally(normalizeTally(await readChain<Tally>('get_tally', [id])));
         setResult(normalizeResult(await readChain<Result>('get_result', [id])));
+        setBindingAction(next.binding ? normalizeBindingAction(await readChain<Record<string, unknown>>('get_binding_action', [id])) : null);
       }
     } catch (err) { setError(actionError(err)); }
     finally { setLoading(false); }
@@ -95,6 +98,11 @@ export function StagePages({ stage }: { stage: Stage }) {
           const final = normalizeResult(await readChain<Result>('get_result', [id]));
           if (!final.finalized) throw new Error('result is not finalized in application state');
         }
+        if (['dispatch_binding', 'refresh_binding_action', 'recover_binding_action'].includes(functionName)) {
+          const binding = normalizeBindingAction(await readChain<Record<string, unknown>>('get_binding_action', [id]));
+          if (functionName === 'dispatch_binding' && !binding.exists) throw new Error('Binding authorization was not created in Merivox state');
+          return `Binding action read back as ${binding.lifecycle}`;
+        }
         return `Application state verified: ${fresh.status}`;
       });
       await reload();
@@ -117,7 +125,7 @@ export function StagePages({ stage }: { stage: Stage }) {
     {error && <div className="error-box" role="alert">{error}<button className="text-arrow" onClick={() => void reload()}>Retry</button></div>}
     {round && stage === 'align' && <AlignmentRoom round={round} nominations={nominations} choices={choices} alignment={alignment} busy={busy} now={Math.floor(Date.now() / 1000)} onAction={action} />}
     {round && stage === 'ballot' && <BallotRoom round={round} choices={choices} tally={tally} member={member} account={account} networkOK={networkOK} busy={busy} selected={selected} setSelected={setSelected} onConnect={connect} onAction={action} />}
-    {round && stage === 'outcome' && <OutcomeRoom round={round} nominations={nominations} choices={choices} tally={tally} result={result} busy={busy} now={Math.floor(Date.now() / 1000)} onAction={action} />}
+    {round && stage === 'outcome' && <OutcomeRoom round={round} nominations={nominations} choices={choices} tally={tally} result={result} bindingAction={bindingAction} busy={busy} now={Math.floor(Date.now() / 1000)} onAction={action} />}
     <Link href="/method" className="text-arrow">Understand the decision mechanism <ArrowRight size={15} /></Link>
   </div>;
 }
@@ -151,7 +159,7 @@ function BallotRoom({ round, choices, tally, member, account, networkOK, busy, s
   </>;
 }
 
-function OutcomeRoom({ round, nominations, choices, tally, result, busy, now, onAction }: { round: Round; nominations: Nomination[]; choices: Choice[]; tally: Tally | null; result: Result | null; busy: boolean; now: number; onAction: (label: string, functionName: string, args: unknown[]) => Promise<void> }) {
+function OutcomeRoom({ round, nominations, choices, tally, result, bindingAction, busy, now, onAction }: { round: Round; nominations: Nomination[]; choices: Choice[]; tally: Tally | null; result: Result | null; bindingAction: BindingAuthorization | null; busy: boolean; now: number; onAction: (label: string, functionName: string, args: unknown[]) => Promise<void> }) {
   const winner = choices.find(choice => choice.id === result?.winner_choice_id);
   const tied = choices.filter(choice => result?.tie_choice_ids?.includes(choice.id));
   const needsFinalize = !result?.finalized && now >= round.ballot_close && ['BALLOT_READY', 'VOTING', 'RECONCILING'].includes(round.status);
@@ -161,6 +169,7 @@ function OutcomeRoom({ round, nominations, choices, tally, result, busy, now, on
     {result?.finalized && <div className="result-stats"><div><b>{result.voter_count ?? tally?.voter_count ?? 0}</b><span>Votes cast</span></div><div><b>{result.quorum ?? tally?.quorum ?? round.quorum}</b><span>Quorum required</span></div><div><b>{choices.length}</b><span>Canonical choices</span></div></div>}
     {result?.status === 'TIED' && <div className="tie-grid">{tied.map(choice => <article key={choice.id}><span>TIED CHOICE</span><b>{choice.anchor_title}</b><small>{tally?.items.find(item => item.choice_id === choice.id)?.votes ?? 0} votes</small></article>)}</div>}
     <ChoiceMap nominations={nominations} choices={choices} live />
+    {round.binding && result?.finalized && <div className="action-status-card"><div><span className="section-kicker">GOVERNED ACTION / {round.space_id}</span><h3>{bindingAction?.lifecycle?.replaceAll('_', ' ') ?? 'NOT AUTHORIZED'}</h3><p>{bindingAction?.action_type?.replaceAll('_', ' ') ?? 'No protected action was authorized.'}{bindingAction?.recipient_wallet ? ` · ${bindingAction.recipient_wallet}` : ''}</p>{bindingAction?.action_digest && <code>{bindingAction.action_digest}</code>}</div><div className="control-actions">{!bindingAction?.exists && round.action_status === 'APPROVED' && <button className="btn btn-dark" disabled={busy} onClick={() => void onAction('Dispatch governed action', 'dispatch_binding', [round.id])}>Dispatch to ActionGate <ArrowRight size={16} /></button>}{bindingAction?.exists && ['DISPATCHED', 'PENDING_RECOVERY'].includes(bindingAction.lifecycle) && <><button className="btn btn-quiet" disabled={busy} onClick={() => void onAction('Refresh governed action', 'refresh_binding_action', [round.id])}>Refresh child status <RefreshCw size={15} /></button>{bindingAction.lifecycle === 'PENDING_RECOVERY' && <button className="btn btn-dark" disabled={busy} onClick={() => void onAction('Recover governed action', 'recover_binding_action', [round.id])}>Retry bounded delivery <ArrowRight size={16} /></button>}</>}</div></div>}
     {result?.finalized && <div className="provenance-card"><div className="section-kicker">VERIFIABLE PROVENANCE</div><p>Result, tally, and every alternative-to-choice assignment are read from the Merivox contract. Validators classify semantic equivalence; the contract never selects a winner by AI.</p><div className="provenance-row"><span>Round status</span><b>{readableStatus(round.status)}</b></div><div className="provenance-row"><span>Finalized at</span><b>{result.finalized_at ? new Date(result.finalized_at * 1000).toLocaleString() : '—'}</b></div><div className="provenance-row"><span>Original alternatives</span><b>{nominations.length}</b></div><div className="provenance-row"><span>Finalization transaction</span><b>Available in transaction activity</b></div></div>}
   </>;
 }

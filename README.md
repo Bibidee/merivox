@@ -6,7 +6,7 @@ Merivox is a backendless GenLayer application for forming more representative co
 
 ## Current status
 
-The remediation release is deployed at [merivox.vercel.app](https://merivox.vercel.app) against a byte-for-byte verified Studionet contract. Fresh live CLI evidence records genuine `EQUIVALENT`, `DISTINCT` and `AMBIGUOUS` validator classifications, four votes, and terminal `DECIDED` readback. Production browser route/readback and core wallet-network states are verified; the release verdict is `READY WITH DISCLOSED LIMITATIONS` for unexercised account-switch, rejected-signature, in-flight recovery/duplicate and mobile cases. The architecture remains backendless: the browser reads and writes the contract directly through an injected EIP-1193 wallet.
+The release preserves the deployed decision-studio identity while extending it with a second, contract-enforced ActionGate for governed community announcements. Prior one-contract lifecycle evidence remains explicitly tied to that earlier source; the current release ledger records the new pair only after fresh Studionet and Vercel verification. The architecture remains backendless: the browser reads and writes both contracts directly through an injected EIP-1193 wallet.
 
 | Area | Status |
 |---|---|
@@ -16,13 +16,13 @@ The remediation release is deployed at [merivox.vercel.app](https://merivox.verc
 | Frozen ballot, voting, quorum and tie result | Implemented and covered by Direct Mode tests |
 | Historical Studionet lifecycle evidence | Live round `1` finalized a tie; later validator calls required explicit fallback |
 | Remediation release | Deployed with exact source parity; live alignment, voting and terminal result evidence recorded |
-| CI verification | GitHub Actions run [#14](https://github.com/Bibidee/merivox/actions/runs/39574133617) passed contract and frontend jobs |
+| CI verification | Frontend preflight plus static, direct and cross-contract suites are required |
 
 ## Non-negotiable product definition
 
 - Target: GenLayer Studionet, chain ID `61999`, RPC `https://studio.genlayer.com/api`.
 - CLI: repository-local `genlayer` `0.39.1`; do not use a global CLI.
-- Stack: Next.js App Router, TypeScript, injected EIP-1193 wallet, one Python Intelligent Contract.
+- Stack: Next.js App Router, TypeScript, injected EIP-1193 wallet, Merivox plus a contract-enforced Python ActionGate.
 - No API backend, no database, no backend model or operator, no cron/queue, no private keys in browser source.
 - No payment custody, no bonds, no token or asset allocation.
 - An actual validator equivalence judgment must change the canonical ballot; one-wallet-one-vote and tallying are deterministic.
@@ -39,10 +39,12 @@ The remediation release is deployed at [merivox.vercel.app](https://merivox.verc
 7. Eligible wallets cast one on-chain vote each. A deadline and quorum are enforced by the contract.
 8. Anyone may finalize. A unique winner, tie or no-quorum result is recorded deterministically.
 9. The frontend reconstructs round, votes, mappings and history from final chain state.
+10. Communities can create immutable spaces. A governed action round freezes an exact grant/revoke envelope; only the finalized Merivox contract can dispatch it to ActionGate, which verifies the current authorization before changing publisher state.
 
 ## Existing structure
 
 - `contracts/merivox.py`: Intelligent Contract for immutable rounds, nominations, validator reconciliation, frozen ballots, voting and deterministic outcomes.
+- `contracts/merivox_action_gate.py`: second Intelligent Contract for immediate-caller-authenticated publisher permissions and append-only announcements.
 - `app/`: static Next.js routes for the landing, wizard, round workspace, alignment, ballot, outcome, activity and method.
 - `components/ChoiceMap.tsx`: contract-backed Choice Map with explicit live, canonical and uncertain states; the home preview is labelled illustrative.
 - `components/AppProviders.tsx`: injected-wallet state and network handling.
@@ -50,6 +52,8 @@ The remediation release is deployed at [merivox.vercel.app](https://merivox.verc
 - `docs/SPEC.md`: binding product semantics and state-machine requirements.
 - `docs/ARCHITECTURE.md`: no-backend model and frontend design system.
 - `docs/SECURITY.md`: threat model and invariants.
+- `docs/THREAT_MODEL.md`: governed-action attack surfaces and mitigations.
+- `docs/TEST_MATRIX.md`: required local, cross-contract, browser and live evidence matrix.
 - `docs/DEPLOYMENT.md`: recorded deployment, lifecycle and browser evidence.
 - `CODEX_BUILD_PROMPT.md`: instructions to complete, test, deploy and harden.
 
@@ -80,6 +84,7 @@ For local development, copy `.env.example` to `.env.local` and set the final add
 
 ```
 NEXT_PUBLIC_MERIVOX_CONTRACT=0x...
+NEXT_PUBLIC_MERIVOX_ACTION_GATE=0x...
 ```
 
 The browser never contains private keys, and no application backend or database is required.

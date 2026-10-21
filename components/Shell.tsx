@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, type ReactNode } from 'react';
-import { AlertTriangle, ChevronDown, CircleHelp, LayoutDashboard, ListChecks, LogOut, Menu, Plus, Radio, Wallet, X } from 'lucide-react';
+import { AlertTriangle, ChevronDown, CircleHelp, LayoutDashboard, ListChecks, LogOut, Menu, Plus, Radio, UsersRound, Wallet, X } from 'lucide-react';
 import { useApp } from './AppProviders';
 import { contractConfigured } from '@/lib/config';
 import { shortAddress } from '@/lib/model';
@@ -11,6 +11,7 @@ import { shortAddress } from '@/lib/model';
 const NAV = [
   { href: '/', label: 'Decision floor', icon: LayoutDashboard },
   { href: '/activity', label: 'Rounds', icon: ListChecks },
+  { href: '/community', label: 'Communities', icon: UsersRound },
   { href: '/method', label: 'Method', icon: CircleHelp },
 ];
 

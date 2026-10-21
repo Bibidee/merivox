@@ -244,6 +244,77 @@ def test_tie_no_quorum_and_vote_rejections(direct_vm, direct_deploy, direct_owne
     assert contract.get_result(no_quorum)['reason'] == 'TURNOUT_BELOW_QUORUM'
 
 
+def test_community_roster_is_immutable_and_binding_rounds_are_member_initiated(
+    direct_vm, direct_deploy, direct_owner, direct_alice, direct_bob, direct_accounts
+):
+    contract = direct_deploy('contracts/merivox.py')
+    roster = members(direct_owner, direct_alice, direct_bob)
+    direct_vm.warp('2027-01-15T00:00:00Z')
+    assert contract.create_space('builders', 'Builder community', roster) == 'builders'
+    assert contract.get_space('builders')['members'] == [item.lower() for item in roster]
+    with direct_vm.expect_revert('already registered'):
+        contract.create_space('builders', 'Replacement community', roster)
+    with direct_vm.expect_revert('Only frozen community members'):
+        with direct_vm.prank(direct_accounts[0]):
+            contract.create_binding_round('builders', QUESTION, 1_799_972_400, 1_799_978_400)
+    with direct_vm.prank(direct_alice):
+        binding_id = contract.create_binding_round('builders', QUESTION, 1_799_972_400, 1_799_978_400)
+    record = contract.get_round(binding_id)
+    assert record['binding'] is True
+    assert record['space_id'] == 'builders'
+    assert record['quorum'] == 2
+    with direct_vm.expect_revert('typed action nomination'):
+        with direct_vm.prank(direct_owner):
+            contract.nominate(binding_id, 'Ordinary nomination', DETAILS, 'Members', 'Written notice', 'Friday')
+    with direct_vm.prank(direct_owner):
+        alternative_id = contract.nominate_binding(
+            binding_id,
+            'Publish the weekly community notice',
+            'Grant one roster member permission to publish official announcements for a bounded period.',
+            'Community members',
+            'Official announcement feed',
+            'This week',
+            'GRANT_PUBLISHER',
+            address(direct_alice),
+            'PUBLISHER',
+            1_799_975_000,
+        )
+    alternative = contract.get_alternative(alternative_id)
+    assert alternative['binding'] is True
+    assert alternative['recipient_wallet'] == address(direct_alice).lower()
+    assert len(alternative['action_digest']) == 64
+    with direct_vm.expect_revert('Recipient must belong'):
+        with direct_vm.prank(direct_alice):
+            contract.nominate_binding(
+                binding_id,
+                'Invalid recipient action',
+                DETAILS,
+                'Members',
+                'Official feed',
+                'Friday',
+                'GRANT_PUBLISHER',
+                address(direct_accounts[0]),
+                'PUBLISHER',
+                1_799_975_000,
+            )
+
+
+def test_action_gate_rejects_non_merivox_permission_changes(
+    direct_vm, direct_deploy, direct_owner, direct_alice
+):
+    gate = direct_deploy(
+        'contracts/merivox_action_gate.py',
+        address(direct_alice),
+    )
+    with direct_vm.expect_revert('Only the configured Merivox contract'):
+        gate.apply_authorization(
+            'builders', 'GRANT_PUBLISHER', address(direct_owner), 'PUBLISHER',
+            1_799_975_000, 1, 'not-a-real-digest',
+        )
+    with direct_vm.expect_revert('not an active publisher'):
+        gate.publish_announcement('builders', 'An unauthorized announcement')
+
+
 def direct_accounts_for_test(vm):
     """Use a deterministic non-roster address without importing SDK internals."""
     import hashlib

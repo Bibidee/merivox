@@ -9,6 +9,8 @@ export type RoundStatus =
   | 'CANCELLED';
 
 export type Judgment = 'EQUIVALENT' | 'DISTINCT' | 'AMBIGUOUS' | 'UNRESOLVED' | 'UNREVIEWED';
+export type ActionType = 'GRANT_PUBLISHER' | 'REVOKE_PUBLISHER';
+export type ActionLifecycle = 'NOT_AUTHORIZED' | 'DISPATCHED' | 'APPLIED' | 'PENDING_RECOVERY' | 'SUPERSEDED' | 'EXPIRED' | 'NOT_BINDING';
 export type TxPhase = 'IDLE' | 'SIGNING' | 'SUBMITTED' | 'ACCEPTED' | 'FINALIZED' | 'VERIFIED' | 'FAILED' | 'UNDETERMINED';
 
 export const ROUND_RULES = {
@@ -55,6 +57,9 @@ export interface Round {
   last_judgment: Judgment | string;
   winner_choice_id: string;
   result_reason: string;
+  binding?: boolean;
+  space_id?: string;
+  action_status?: ActionLifecycle | string;
 }
 
 export interface Nomination {
@@ -72,6 +77,13 @@ export interface Nomination {
   last_attempt_at: number;
   last_error: string;
   created_at: number;
+  binding?: boolean;
+  space_id?: string;
+  action_type?: ActionType | string;
+  recipient_wallet?: string;
+  permission_scope?: string;
+  expires_at?: number;
+  action_digest?: string;
 }
 
 export interface Choice {
@@ -87,6 +99,64 @@ export interface Choice {
   votes: number;
   uncertain: boolean;
   created_at: number;
+  binding?: boolean;
+  action?: BindingAction;
+}
+
+export interface BindingAction {
+  space_id: string;
+  action_type: ActionType | string;
+  recipient_wallet: string;
+  permission_scope: string;
+  expires_at: number;
+  action_digest: string;
+}
+
+export interface CommunitySpace {
+  space_id: string;
+  name: string;
+  founder: string;
+  members: string[];
+  member_count: number;
+  created_at: number;
+}
+
+export interface BindingAuthorization extends BindingAction {
+  exists: boolean;
+  round_id: string;
+  version: number;
+  finalized_at: number;
+  lifecycle: ActionLifecycle | string;
+  dispatched_at: number;
+  applied_at: number;
+  last_error: string;
+  action_status: ActionLifecycle | string;
+}
+
+export interface Permission {
+  exists: boolean;
+  applied: boolean;
+  effective: boolean;
+  active: boolean;
+  space_id?: string;
+  recipient_wallet?: string;
+  permission_scope?: string;
+  action_type?: ActionType | string;
+  expires_at: number;
+  version: number;
+  action_digest: string;
+  applied_at?: number;
+  reason: string;
+}
+
+export interface Announcement {
+  id: string;
+  space_id: string;
+  author: string;
+  content: string;
+  content_digest: string;
+  published_at: number;
+  authorization_version: number;
 }
 
 export interface AlignmentState {

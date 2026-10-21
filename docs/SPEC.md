@@ -23,9 +23,20 @@ Only on-chain frozen nomination fields are evidence. No arbitrary web fetch is n
 - Two suggestions that use similar language but specify incompatible delivery dates or target participants: distinct.
 - Inadequately specified or mutually inconsistent objectives: ambiguous, not forced equivalent.
 
+## Governed action extension
+
+Merivox has two Intelligent Contracts. `Merivox` owns immutable communities, rounds, nominations, consensus classifications, ballots and the authoritative action envelope. `MerivoxActionGate` owns publisher permissions and append-only announcements. There is no application backend or administrator grant path.
+
+- A community space has a unique immutable ID, name, founder and frozen 3–25 wallet roster. Only a frozen member may initiate a binding round.
+- A binding nomination carries exact `space_id`, `action_type`, `recipient_wallet`, `permission_scope`, `expires_at` and a deterministic `action_digest`. The envelope is part of validator comparison and cannot be edited after nomination.
+- Only a finalized, decided, quorum-satisfying, non-ambiguous binding round can become `APPROVED`; the Merivox contract then dispatches the exact envelope to ActionGate through a finalized child transaction.
+- ActionGate accepts permission changes only when the immediate transaction sender is its configured Merivox address and the message matches the current Merivox authorization version and digest. The original wallet is not treated as the internal caller.
+- Publisher permission reads are authoritative only when the version and digest still match Merivox. Announcement publication requires an effective grant, is append-only, and is verified by a post-finality readback.
+- Binding lifecycle values are `NOT_AUTHORIZED`, `DISPATCHED`, `APPLIED`, `PENDING_RECOVERY`, `SUPERSEDED` and `EXPIRED`. Recovery is bounded by a cooldown and cannot revive an expired or superseded envelope.
+
 ## Binding V1 limits
 
-- One Python Intelligent Contract; no custody, admin judge, escrow, backend, database or server scheduler.
+- Two Python Intelligent Contracts; no custody, admin judge, administrator grant, escrow, backend, database or server scheduler.
 - 3–25 distinct eligible wallet addresses per round, roster fixed at creation; creator must be included.
 - 1 nomination per eligible wallet, at most 8 per round.
 - Question: 15–320 characters. Title: 8–100. Details: 30–800. Audience, delivery and timing: at most 180 characters each.
@@ -33,6 +44,7 @@ Only on-chain frozen nomination fields are evidence. No arbitrary web fetch is n
 - Round creator chooses nomination deadline, final ballot deadline and quorum. The contract derives `alignment_close = ballot_close - 900` and requires `ballot_close > nomination_close + 3,300` seconds: 2,400 seconds for eight nominations at three bounded attempts, 60-second cooldowns and a 120-second validator grace per nomination, plus 900 seconds of voting. The frontend uses the same constants and rejects the exact boundary; chain time remains authoritative.
 - One wallet gets one vote. Ballots are public; anonymous or private voting is not claimed.
 - No administrator may override reconciliation, edit original submissions, rewrite votes or choose a winner.
+- No administrator may grant ActionGate permission directly; deployment bootstrap only performs a one-time reciprocal contract binding.
 
 ## State machine
 
