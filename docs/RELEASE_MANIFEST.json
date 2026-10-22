@@ -1,5 +1,6 @@
 {
   "project": "merivox",
+  "releaseName": "Merivox V1 — Final Pre-Submission Release",
   "network": {
     "name": "GenLayer Studionet",
     "chainId": 61999,
@@ -9,10 +10,12 @@
   "finalReadiness": {
     "branch": "remediation/post-submission-security-remediation",
     "implementationCommit": "541b8b797226da1e5d6bca85a0435a7d156ef8bd",
+    "releaseCommit": "5f76ca98603e3c5e51faf55384030dd5ac3d9cb3",
     "releaseEvidenceCommit": "9c1f65ba8f00d1ac642ea0edadeb99bb52ce6908",
     "merivoxSha256": "98C1A343C29C600F1BC44B8B0B48BCBCD10648EDB6DFE4F6782CAA715AADC4CE",
     "actionGateSha256": "E9B7E904624C4860F1BCCD0F72FC2D96794B617E33E91F73204576AEF2ADA305",
     "status": "deployed-and-live-verified",
+    "readiness": "READY WITH DISCLOSED LIMITATIONS",
     "requiresExplicitApproval": false
   },
   "deployedContracts": {
@@ -29,7 +32,7 @@
   },
   "verification": {
     "liveEvidence": "docs/LIVE_EVIDENCE.md",
-    "ciRun": "https://github.com/Bibidee/merivox/actions/runs/39770706659",
+    "ciRun": "https://github.com/Bibidee/merivox/actions/runs/39770891412",
     "grantRound": "1",
     "grantFinalizationTx": "0x59969c28528f763d50cff978356f0abd653126629bc76bf5f177de35cd87565e",
     "grantDispatchParent": "0xdd3bd8535d7296332d1ff19eef18d36944f72f55b51ce6c245d64a46c987fdc1",

@@ -1,6 +1,6 @@
-# MERIVOX V1 — remediation handoff
+# MERIVOX V1 — Final Pre-Submission Release
 
-Current verdict: `READY WITH DISCLOSED UI LIMITATIONS`. The corrected implementation is deployed, both live binding lifecycles are verified through finalized cross-contract application, and the final evidence is recorded in [`docs/LIVE_EVIDENCE.md`](docs/LIVE_EVIDENCE.md).
+Current verdict: `READY WITH DISCLOSED LIMITATIONS`. Merivox is prepared for submission but has not been submitted or merged. The corrected implementation is deployed, both live binding lifecycles are verified through finalized cross-contract application, and the final evidence is recorded in [`docs/LIVE_EVIDENCE.md`](docs/LIVE_EVIDENCE.md).
 
 ## Current verified state
 
@@ -22,6 +22,8 @@ Current verdict: `READY WITH DISCLOSED UI LIMITATIONS`. The corrected implementa
 - ActionGate source SHA-256: `E9B7E904624C4860F1BCCD0F72FC2D96794B617E33E91F73204576AEF2ADA305`
 - Vercel: [merivox.vercel.app](https://merivox.vercel.app)
 - PR: [#2](https://github.com/Bibidee/merivox/pull/2) — open for reassessment; do not merge silently.
+- Final release commit: `5f76ca98603e3c5e51faf55384030dd5ac3d9cb3`
+- Passing release CI: [#31](https://github.com/Bibidee/merivox/actions/runs/39770891412)
 
 ## Final evidence
 
@@ -31,6 +33,6 @@ Current verdict: `READY WITH DISCLOSED UI LIMITATIONS`. The corrected implementa
 - Post-revoke rejection: `0x83b521cd6c6476fc054139458d8a1d018ecfc16b6ab980f089240e7ab71a6e56`
 - Stale grant supersession: `0x8ffd7e89fb7019ffcc045cb15807eaf86f707cfd86f1d72f5415e5c7fe681ec2`
 
-Final evidence commit: `9c1f65ba8f00d1ac642ea0edadeb99bb52ce6908`. CI [#29](https://github.com/Bibidee/merivox/actions/runs/39770706659) passed on that release commit. Mobile viewport and rejected-signature UI flows remain disclosed limitations; no private key is accessed by the agent.
+Final evidence ledger commit: `9c1f65ba8f00d1ac642ea0edadeb99bb52ce6908`. The final release head `5f76ca98603e3c5e51faf55384030dd5ac3d9cb3` passed [CI #31](https://github.com/Bibidee/merivox/actions/runs/39770891412). Computer Use verified the production routes at 375px, 390px, 768px and 1440px with no horizontal overflow; a transient RPC read error recovered on isolated retry. Rejected-signature UI remains a controlled-review limitation rather than a claimed live wallet test; no private key is accessed by the agent.
 
 No private key is accessed by the agent. Wallet signing is not required for the existing unlocked CLI accounts used in this verification.

@@ -22,7 +22,7 @@ The original Merivox Decision Studio, Choice Map, activity directory, round work
 
 ## Strict-review limitations
 
-Wallet identities are pseudonymous, validator availability can require bounded retries, and hosted RPC/browser verification can encounter transient read failures. Live evidence must disclose any unexercised mobile, rejected-signature or in-flight recovery paths.
+Wallet identities are pseudonymous, validator availability can require bounded retries, and hosted RPC/browser verification can encounter transient read failures. Responsive production routes were exercised at 375px, 390px, 768px and 1440px; rejected-signature and in-flight recovery remain disclosed unexercised live wallet paths.
 
 ## Final-readiness findings
 

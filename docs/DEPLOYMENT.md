@@ -1,6 +1,6 @@
-# Merivox V1 — deployment and verification ledger
+# Merivox V1 — Final Pre-Submission Release — deployment and verification ledger
 
-This ledger describes the corrected immutable contract pair, the Vercel production deployment, and the live Studionet lifecycle evidence. The earlier development pair is retained only as historical context and is not the submitted release target.
+This ledger describes the corrected immutable contract pair, the Vercel production deployment, and the live Studionet lifecycle evidence. The earlier development pair is retained only as historical context; Merivox is prepared for submission but has not been submitted or merged.
 
 ## Current release target
 
@@ -9,6 +9,7 @@ This ledger describes the corrected immutable contract pair, the Vercel producti
 - Repository-local CLI: `genlayer@0.39.1`
 - Branch: `remediation/post-submission-security-remediation`
 - Implementation commit before evidence-document updates: `541b8b797226da1e5d6bca85a0435a7d156ef8bd`
+- Final release commit: `5f76ca98603e3c5e51faf55384030dd5ac3d9cb3`
 - Merivox: `0xB81D80f2661a78a0742B190fE44f15149156a6DF`
 - ActionGate: `0x5DE12E4E0a80A621Af8Cb4c453FaE569df857206`
 - Merivox source SHA-256: `98C1A343C29C600F1BC44B8B0B48BCBCD10648EDB6DFE4F6782CAA715AADC4CE`
@@ -30,7 +31,7 @@ The Vercel project `bibidees-projects/merivox` was updated to the corrected cont
 
 The live grant lifecycle is complete through `APPLIED` and authorized publication. The live revoke lifecycle is complete through validator-backed `DISTINCT` and `EQUIVALENT` alignment, three finalized votes, deadline-gated finalization, finalized parent/child delivery, `APPLIED`/`REVOKED` readback, rejected post-revoke publication and stale grant supersession. The exact receipts and canonical reads are in [`LIVE_EVIDENCE.md`](LIVE_EVIDENCE.md).
 
-Local verification includes the frontend test suite, lint, typecheck, production build, Python contract suite under the compatible Python runtime, static checks and the repository preflight. GitHub Actions is the authoritative remote CI record linked from the release manifest. Mobile viewport and rejected-wallet-signature flows remain disclosed as unexercised UI paths.
+Local verification includes the frontend test suite, lint, typecheck, production build, Python contract suite under the compatible Python runtime, static checks and the repository preflight. GitHub Actions is the authoritative remote CI record linked from the release manifest. Computer Use verified the required production routes at 375px, 390px, 768px and 1440px with no horizontal overflow; one transient RPC read error recovered on isolated retry. Rejected-wallet-signature remains a disclosed unexercised live UI path.
 
 ## Historical deployment
 

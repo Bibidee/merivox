@@ -1,8 +1,8 @@
-# Merivox — The Decision Studio
+# Merivox V1 — Final Pre-Submission Release
 
 **Production V1 — GenLayer Studionet 61999**
 
-Merivox is a backendless GenLayer application for forming more representative community ballots. Eligible members propose actionable alternatives; independent validators will classify whether those alternatives are materially equivalent before the ballot freezes. Members, not AI, vote on the final choices.
+Merivox is the Decision Studio: a backendless GenLayer application for forming more representative community ballots. Eligible members propose actionable alternatives; independent validators classify whether those alternatives are materially equivalent before the ballot freezes. Members, not AI, vote on the final choices. This release is prepared for submission and has not been submitted or merged.
 
 ## Current status
 
@@ -16,7 +16,7 @@ The expanded Merivox V1 preserves the original Decision Studio identity while ex
 | Frozen ballot, voting, quorum and tie result | Implemented and covered by Direct Mode tests |
 | Current Studionet lifecycle evidence | Corrected pair demonstrates live grant and revoke rounds, validator-backed consensus, finalized child delivery, publication controls and replay protection |
 | Current deployment | Merivox and ActionGate are mutually bound on Studionet 61999; exact addresses and receipts are in `docs/LIVE_EVIDENCE.md` |
-| Release branch | `remediation/post-submission-security-remediation`; final submission commit and PR are recorded in `HANDOFF_STATUS.md` |
+| Release branch | `remediation/post-submission-security-remediation`; final release commit and open PR are recorded in `HANDOFF_STATUS.md` |
 | CI verification | The current release commit is verified by GitHub Actions; the run link is recorded in `docs/TEST_MATRIX.md` |
 
 ## Non-negotiable product definition
@@ -94,7 +94,7 @@ The browser never contains private keys, and no application backend or database 
 
 See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for exact deployment, source-parity, live lifecycle and verification evidence.
 
-## Final submission hardening
+## Final pre-submission hardening
 
 The final-readiness branch prevents a unique-but-ineligible binding result from being labelled `APPROVED`, enforces exact typed action-envelope equality before validator-equivalent nominations merge, indexes announcements per community, presents approved-versus-applied governance states, reads all bounded pages and verifies publication by the finalized announcement ID. It also records the remaining development-tool audit limitations in [`docs/SECURITY.md`](docs/SECURITY.md).
 
