@@ -1,6 +1,6 @@
 # Merivox governed-actions threat model
 
-This is the pre-submission final security audit of the governed-action path. The corrected pair is live on Studionet 61999; the earlier pair remains historical and is not used as current proof.
+This is the pre-submission final security audit of the governed-action path. The corrected pair is live on Studionet 61999 and the production implementation is merged into `main` at `778489c93f3c9269b21e53c9ad7204b2706faf37`; the earlier pair remains historical and is not used as current proof.
 
 ## Scope
 

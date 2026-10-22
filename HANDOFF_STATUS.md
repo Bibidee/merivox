@@ -15,16 +15,17 @@ Current verdict: `READY WITH DISCLOSED LIMITATIONS`. Merivox is merged into `mai
 
 ## Release artifacts
 
-- Branch: `remediation/post-submission-security-remediation`
+- Branch: `main`
 - Corrected Merivox: `0xB81D80f2661a78a0742B190fE44f15149156a6DF`
 - Corrected ActionGate: `0x5DE12E4E0a80A621Af8Cb4c453FaE569df857206`
 - Merivox source SHA-256: `98C1A343C29C600F1BC44B8B0B48BCBCD10648EDB6DFE4F6782CAA715AADC4CE`
 - ActionGate source SHA-256: `E9B7E904624C4860F1BCCD0F72FC2D96794B617E33E91F73204576AEF2ADA305`
 - Vercel: [merivox.vercel.app](https://merivox.vercel.app)
-- Current Vercel deployment: [AV5U9Xx7Q2Tw1xwZetJzMyikZvHe](https://vercel.com/bibidees-projects/merivox/AV5U9Xx7Q2Tw1xwZetJzMyikZvHe) — `READY`
-- PR: [#2](https://github.com/Bibidee/merivox/pull/2) — open for reassessment; do not merge silently.
-- Final release commit: `dfd9640ff2501e05571d1d7fd58f4120543d83c0`
-- Passing release CI: [#37](https://github.com/Bibidee/merivox/actions/runs/39774221576)
+- Current Vercel deployment: [dpl_GGxgQhpHFWXY9k1HUCz1Ve3sUwyf](https://vercel.com/bibidees-projects/merivox/GGxgQhpHFWXY9k1HUCz1Ve3sUwyf) — `READY`; production implementation commit `778489c93f3c9269b21e53c9ad7204b2706faf37`
+- PRs: [#2](https://github.com/Bibidee/merivox/pull/2) merged as `239f5fbafb86f8e3b9725655a820ad18a3fbc8ff`; [#3](https://github.com/Bibidee/merivox/pull/3) merged as `778489c93f3c9269b21e53c9ad7204b2706faf37`
+- Production implementation commit: `778489c93f3c9269b21e53c9ad7204b2706faf37`
+- Current documentation head: `6b2d856b89d9fd9a4d54c53598c957bb8e45f955`
+- Passing main CI: [#43](https://github.com/Bibidee/merivox/actions/runs/39777522684)
 
 ## Final evidence
 
@@ -34,6 +35,6 @@ Current verdict: `READY WITH DISCLOSED LIMITATIONS`. Merivox is merged into `mai
 - Post-revoke rejection: `0x83b521cd6c6476fc054139458d8a1d018ecfc16b6ab980f089240e7ab71a6e56`
 - Stale grant supersession: `0x8ffd7e89fb7019ffcc045cb15807eaf86f707cfd86f1d72f5415e5c7fe681ec2`
 
-Final evidence ledger commit: `9c1f65ba8f00d1ac642ea0edadeb99bb52ce6908`. The final release head `dfd9640ff2501e05571d1d7fd58f4120543d83c0` passed [CI #37](https://github.com/Bibidee/merivox/actions/runs/39774221576). Computer Use verified the production routes at 375px, 390px, 768px and 1440px with no horizontal overflow; a transient RPC read error recovered on isolated retry. The wallet-rejection path now records `FAILED` locally when signing is rejected, with a focused regression test; no live wallet rejection was requested or claimed.
+Historical evidence ledger commit: `9c1f65ba8f00d1ac642ea0edadeb99bb52ce6908`. The merged production implementation `778489c93f3c9269b21e53c9ad7204b2706faf37` and current documentation head `6b2d856b89d9fd9a4d54c53598c957bb8e45f955` passed [CI #43](https://github.com/Bibidee/merivox/actions/runs/39777522684). Computer Use verified the production routes at 375px, 390px, 768px and 1440px with no horizontal overflow; a transient RPC read error recovered on isolated retry. The wallet-rejection path now records `FAILED` locally when signing is rejected, with a focused regression test; no live wallet rejection was requested or claimed.
 
 No private key is accessed by the agent. Wallet signing is not required for the existing unlocked CLI accounts used in this verification.

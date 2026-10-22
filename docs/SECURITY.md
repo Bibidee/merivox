@@ -1,6 +1,6 @@
 # Merivox security model and pre-submission final audit
 
-This document covers the final pre-submission implementation and its live Studionet deployment. The earlier pair remains historical evidence only; the current addresses and finalized transactions are recorded in [`LIVE_EVIDENCE.md`](LIVE_EVIDENCE.md).
+This document covers the final pre-submission implementation merged into `main` and its live Studionet deployment. The production implementation is commit `778489c93f3c9269b21e53c9ad7204b2706faf37`; the current documentation head is `6b2d856b89d9fd9a4d54c53598c957bb8e45f955`. The earlier pair remains historical evidence only; current addresses and finalized transactions are recorded in [`LIVE_EVIDENCE.md`](LIVE_EVIDENCE.md).
 
 ## Remediation findings and disposition
 
