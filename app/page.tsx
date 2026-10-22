@@ -7,6 +7,7 @@ import { ChoiceMap } from '@/components/ChoiceMap';
 import { readChain } from '@/lib/chain';
 import { contractConfigured } from '@/lib/config';
 import { asNumber, normalizeStatus, type RoundStatus } from '@/lib/model';
+import { readAllPages } from '@/lib/rounds';
 
 type RoundSummary = { id: string; question: string; status: RoundStatus; member_count: number; nomination_count: number; choice_count: number; voter_count: number };
 
@@ -27,7 +28,7 @@ export default function Home() {
     if (!contractConfigured()) { setLoading(false); return; }
     setLoading(true); setError('');
     try {
-      const raw = await readChain<Array<Record<string, unknown>>>('list_rounds', [BigInt(0), BigInt(8)]);
+      const raw = (await readAllPages((offset, limit) => readChain<Array<Record<string, unknown>>>('list_rounds', [BigInt(offset), BigInt(limit)]))).slice(-8);
       setRounds(raw.map(item => ({
         id: String(item.id ?? ''), question: String(item.question ?? ''), status: normalizeStatus(item.status),
         member_count: asNumber(item.member_count), nomination_count: asNumber(item.nomination_count),

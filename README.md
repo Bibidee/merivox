@@ -1,12 +1,12 @@
-# Merivox — The Decision Studio
+# Merivox V1 — Final Pre-Submission Release
 
 **Production V1 — GenLayer Studionet 61999**
 
-Merivox is a backendless GenLayer application for forming more representative community ballots. Eligible members propose actionable alternatives; independent validators will classify whether those alternatives are materially equivalent before the ballot freezes. Members, not AI, vote on the final choices.
+Merivox is the Decision Studio: a backendless GenLayer application for forming more representative community ballots. Eligible members propose actionable alternatives; independent validators classify whether those alternatives are materially equivalent before the ballot freezes. Members, not AI, vote on the final choices. This release is prepared for submission and has not been submitted or merged.
 
 ## Current status
 
-The release preserves the original decision-studio identity while extending it with a second, contract-enforced ActionGate for governed community announcements. The corrected pair has fresh Studionet grant and revoke lifecycle evidence, including finalized parent/child delivery, publication success, and post-revocation rejection. The architecture remains backendless: the browser reads and writes both contracts directly through an injected EIP-1193 wallet.
+The expanded Merivox V1 preserves the original Decision Studio identity while extending it with a second, contract-enforced ActionGate for governed community announcements. The final-readiness branch hardens binding approval, typed-envelope reconciliation, pagination, governance presentation and publication readback. The corrected pair is deployed to Studionet 61999 and the matching frontend is live at [merivox.vercel.app](https://merivox.vercel.app); historical development evidence remains documented separately.
 
 | Area | Status |
 |---|---|
@@ -14,9 +14,10 @@ The release preserves the original decision-studio identity while extending it w
 | Guided decision creator and wallet gating | Implemented against the live contract ABI |
 | Validator-backed semantic reconciliation | Implemented with conservative uncertainty/fallback behavior |
 | Frozen ballot, voting, quorum and tie result | Implemented and covered by Direct Mode tests |
-| Current Studionet lifecycle evidence | Corrected pair demonstrates live grant and revoke rounds, validator-backed `DISTINCT`/`EQUIVALENT`, finalized child delivery and publication controls |
-| Remediation release | Deployed with exact source hashes; current pair and all significant receipts are recorded in `docs/LIVE_EVIDENCE.md` |
-| CI verification | Frontend preflight plus static, direct and cross-contract suites are required |
+| Current Studionet lifecycle evidence | Corrected pair demonstrates live grant and revoke rounds, validator-backed consensus, finalized child delivery, publication controls and replay protection |
+| Current deployment | Merivox and ActionGate are mutually bound on Studionet 61999; exact addresses and receipts are in `docs/LIVE_EVIDENCE.md` |
+| Release branch | `remediation/post-submission-security-remediation`; final release commit and open PR are recorded in `HANDOFF_STATUS.md` |
+| CI verification | The current release commit is verified by GitHub Actions; the run link is recorded in `docs/TEST_MATRIX.md` |
 
 ## Non-negotiable product definition
 
@@ -92,4 +93,10 @@ The browser never contains private keys, and no application backend or database 
 ## Evidence
 
 See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for exact deployment, source-parity, live lifecycle and verification evidence.
+
+## Final pre-submission hardening
+
+The final-readiness branch prevents a unique-but-ineligible binding result from being labelled `APPROVED`, enforces exact typed action-envelope equality before validator-equivalent nominations merge, indexes announcements per community, presents approved-versus-applied governance states, reads all bounded pages and verifies publication by the finalized announcement ID. It also records the remaining development-tool audit limitations in [`docs/SECURITY.md`](docs/SECURITY.md).
+
+The final pair is intentionally a fresh immutable deployment; historical spaces, decisions and permissions remain on the superseded pair and were not silently migrated. The live final pair, Vercel deployment and lifecycle receipts are recorded in [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 

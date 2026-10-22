@@ -1,33 +1,59 @@
 {
   "project": "merivox",
+  "releaseName": "Merivox V1 — Final Pre-Submission Release",
   "network": {
     "name": "GenLayer Studionet",
     "chainId": 61999,
     "rpc": "https://studio.genlayer.com/api",
     "cli": "genlayer@0.39.1"
   },
-  "source": {
-    "implementationCommit": "38a2a8d84d7df26edafa5143ed4cf48268f0f1e3",
-    "merivoxSha256": "E4FEAA9896140A283A3B7A2A349BCB4D675A4F0C1540A6B129B832EC67EA7645",
-    "actionGateSha256": "A047D22FBD568B29ABBB949417FDBCFBD86DBC645D6D37EB9B16E2F0CD26A652"
+  "finalReadiness": {
+    "branch": "remediation/post-submission-security-remediation",
+    "implementationCommit": "541b8b797226da1e5d6bca85a0435a7d156ef8bd",
+    "releaseCommit": "dfd9640ff2501e05571d1d7fd58f4120543d83c0",
+    "releaseEvidenceCommit": "9c1f65ba8f00d1ac642ea0edadeb99bb52ce6908",
+    "frontendHardeningCommit": "dfd9640ff2501e05571d1d7fd58f4120543d83c0",
+    "merivoxSha256": "98C1A343C29C600F1BC44B8B0B48BCBCD10648EDB6DFE4F6782CAA715AADC4CE",
+    "actionGateSha256": "E9B7E904624C4860F1BCCD0F72FC2D96794B617E33E91F73204576AEF2ADA305",
+    "status": "deployed-and-live-verified",
+    "readiness": "READY WITH DISCLOSED LIMITATIONS",
+    "requiresExplicitApproval": false
   },
-  "contracts": {
-    "merivox": "0xe201A351b898D15eF8ACDfFF22f62aFabC834C3C",
-    "merivoxActionGate": "0x263c5bAE66CcFcc04bA3546C3fa191F573C5D46b"
+  "deployedContracts": {
+    "merivox": "0xB81D80f2661a78a0742B190fE44f15149156a6DF",
+    "merivoxDeploymentTx": "0x69f211ef36624c3c73ce289151d0d0ae02133711cff4343ed1facfbf7423dd83",
+    "merivoxActionGate": "0x5DE12E4E0a80A621Af8Cb4c453FaE569df857206",
+    "actionGateDeploymentTx": "0xe5e47381f8ebeefa674233cd16722c136ccd0726b2e6d400bccda759a621edbe",
+    "bindingTx": "0xe31924db6dfdfd7a5fa6274e15a665b08c5791637ad46da4e4b7592e82095874"
   },
   "frontend": {
     "url": "https://merivox.vercel.app",
-    "deployment": "dpl_HguQZeewPHpU7EarDNQLaSS6NjnQ",
+    "deploymentInspectUrl": "https://vercel.com/bibidees-projects/merivox/AV5U9Xx7Q2Tw1xwZetJzMyikZvHe",
     "status": "READY"
   },
   "verification": {
-    "ciRun": "https://github.com/Bibidee/merivox/actions/runs/39670667483",
     "liveEvidence": "docs/LIVE_EVIDENCE.md",
+    "ciRun": "https://github.com/Bibidee/merivox/actions/runs/39774221576",
     "grantRound": "1",
+    "grantFinalizationTx": "0x59969c28528f763d50cff978356f0abd653126629bc76bf5f177de35cd87565e",
+    "grantDispatchParent": "0xdd3bd8535d7296332d1ff19eef18d36944f72f55b51ce6c245d64a46c987fdc1",
+    "grantDispatchChild": "0x0f5b1b50c7e19d5f7c8eff1248c5367cd282843828139d5602ea363a88bf1c1e",
     "revokeRound": "2",
-    "grantDispatchParent": "0xa1deb2aee1baa3739663878145e6de6858fa123bbea3c9df2854365fb783c14a",
-    "grantDispatchChild": "0x08005cf2cf35453aebe3bde21d6abdf181dab99dbe53164df951d48a9134b3ad",
-    "revokeDispatchParent": "0xf4e9e25a8993dd5043c6f5533bd491e771bdef69d0d6050c3249044fe726d66f",
-    "revokeDispatchChild": "0x1a6e175a11ba3edf3be2405d950fe96e5dcfa92d9206b7e5fc2b98713d553479"
+    "revokeBallotDeadlineUtc": "2026-10-22T11:14:57Z",
+    "revokeEarlyFinalizeRejectionTx": "0x6c4d292074aee5a6ae528c13da77dedf644097f0672ef4dfc6e08a6610e52546",
+    "revokeFinalizationTx": "0xf006bfb60f07fff646ccf343a48ee31f48a2e9e856197539aad4d25ee02985e2",
+    "revokeDispatchParent": "0x87679ec6d1e0b218a498af811af8544030873c9b9492b2096886b7692a931ed8",
+    "revokeDispatchChild": "0xf857c738f68d77420f10ce0dc817e47083492d89da3c9707b0ba938ac0ef960b",
+    "revokeRefreshTx": "0x8d9e157263c39b7193f66a184c8d5e69b2b0b01a2ef7aff3f786efb6e543f818",
+    "postRevokePublicationRejectionTx": "0x83b521cd6c6476fc054139458d8a1d018ecfc16b6ab980f089240e7ab71a6e56",
+    "staleGrantSupersessionTx": "0x8ffd7e89fb7019ffcc045cb15807eaf86f707cfd86f1d72f5415e5c7fe681ec2",
+    "compatibleRuntimeLimitations": [
+      "AMBIGUOUS and stale replay are covered by compatible-runtime tests, not claimed as live GenLayer receipts until separately reproduced."
+    ]
+  },
+  "historicalDeployment": {
+    "merivox": "0xe201A351b898D15eF8ACDfFF22f62aFabC834C3C",
+    "merivoxActionGate": "0x263c5bAE66CcFcc04bA3546C3fa191F573C5D46b",
+    "status": "superseded-historical"
   }
 }

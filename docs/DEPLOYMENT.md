@@ -1,40 +1,38 @@
-# Merivox V1 — deployment and verification ledger
+# Merivox V1 — Final Pre-Submission Release — deployment and verification ledger
 
-This is the factual release ledger for the corrected two-contract implementation. Earlier one-contract and superseded-pair evidence remains historical and is not used as current proof.
+This ledger describes the corrected immutable contract pair, the Vercel production deployment, and the live Studionet lifecycle evidence. The earlier development pair is retained only as historical context; Merivox is prepared for submission but has not been submitted or merged.
 
-## Current release
+## Current release target
 
 - Network: GenLayer Studionet, chain `61999`
 - RPC: `https://studio.genlayer.com/api`
 - Repository-local CLI: `genlayer@0.39.1`
-- Implementation commit: `38a2a8d84d7df26edafa5143ed4cf48268f0f1e3`
-- Merivox: `0xe201A351b898D15eF8ACDfFF22f62aFabC834C3C`
-- ActionGate: `0x263c5bAE66CcFcc04bA3546C3fa191F573C5D46b`
-- Merivox source SHA-256: `E4FEAA9896140A283A3B7A2A349BCB4D675A4F0C1540A6B129B832EC67EA7645`
-- ActionGate source SHA-256: `A047D22FBD568B29ABBB949417FDBCFBD86DBC645D6D37EB9B16E2F0CD26A652`
+- Branch: `remediation/post-submission-security-remediation`
+- Implementation commit before evidence-document updates: `541b8b797226da1e5d6bca85a0435a7d156ef8bd`
+- Final release commit: `dfd9640ff2501e05571d1d7fd58f4120543d83c0`
+- Merivox: `0xB81D80f2661a78a0742B190fE44f15149156a6DF`
+- ActionGate: `0x5DE12E4E0a80A621Af8Cb4c453FaE569df857206`
+- Merivox source SHA-256: `98C1A343C29C600F1BC44B8B0B48BCBCD10648EDB6DFE4F6782CAA715AADC4CE`
+- ActionGate source SHA-256: `E9B7E904624C4860F1BCCD0F72FC2D96794B617E33E91F73204576AEF2ADA305`
 - Production frontend: [https://merivox.vercel.app](https://merivox.vercel.app)
-- Vercel deployment: `dpl_HguQZeewPHpU7EarDNQLaSS6NjnQ`, `READY`, production alias verified
+- Current deployment inspect URL: [AV5U9Xx7Q2Tw1xwZetJzMyikZvHe](https://vercel.com/bibidees-projects/merivox/AV5U9Xx7Q2Tw1xwZetJzMyikZvHe)
 
-Deployment transactions, complete grant/revoke lifecycle hashes, parent-child receipts and canonical readbacks are recorded in [`LIVE_EVIDENCE.md`](LIVE_EVIDENCE.md).
+Deployment and lifecycle receipts are recorded in [`LIVE_EVIDENCE.md`](LIVE_EVIDENCE.md).
 
-## Verification result
+## Deployment and bootstrap verification
 
-The corrected live release now demonstrates:
+Both contracts were deployed with the repository-local CLI and explicit receipts reached `FINALIZED` with `MAJORITY_AGREE`. The reciprocal bootstrap binding transaction also reached `FINALIZED`; canonical reads report the ActionGate address from Merivox, the Merivox address from ActionGate, `configured=true` and `bootstrap_closed=true`.
 
-- immutable community and frozen roster;
-- two validator-backed binding rounds with `DISTINCT` and `EQUIVALENT` classifications;
-- finalized grant delivery through `emit(on='finalized')` and ActionGate application;
-- unauthorized publication rejection and authorized append-only publication;
-- finalized revoke delivery through a separate child transaction;
-- ActionGate `effective=false`, `reason=REVOKED`, and finalized rejection of the formerly authorized publisher;
-- production browser readback of the Merivox Decision Studio, Choice Map, community workspace and governed action outcome.
+## Vercel verification
 
-The live grant and revoke rounds each reached `DECIDED` with three votes and a three-wallet quorum. The compatible-runtime suite additionally covers duplicate delivery, recovery and stale authorization replay; those paths are not mislabeled as live receipts.
+The Vercel project `bibidees-projects/merivox` was updated to the corrected contract pair and deployed to the production alias. The current production deployment is `dpl_AV5U9Xx7Q2Tw1xwZetJzMyikZvHe` and is `READY`. The post-hardening outcome route reads the corrected chain state at 375px. No application backend was introduced; the frontend reads the Intelligent Contracts directly.
 
-## CI and tooling disclosure
+## Verification status
 
-Local frontend checks, Direct Mode contract tests and the cross-contract suite pass. [Merivox CI #20](https://github.com/Bibidee/merivox/actions/runs/39670667483) passed on default-branch commit `42731ec1e20ee13874a9fd63c256c1d4fcfd2aac`. The pinned repository toolchain contains no separate `genvm-lint` executable, so the release uses Direct Mode execution, AST/static checks, contract schema inspection and live finalized receipt/readback verification instead.
+The live grant lifecycle is complete through `APPLIED` and authorized publication. The live revoke lifecycle is complete through validator-backed `DISTINCT` and `EQUIVALENT` alignment, three finalized votes, deadline-gated finalization, finalized parent/child delivery, `APPLIED`/`REVOKED` readback, rejected post-revoke publication and stale grant supersession. The exact receipts and canonical reads are in [`LIVE_EVIDENCE.md`](LIVE_EVIDENCE.md).
 
-## Historical releases
+Local verification includes the frontend test suite, lint, typecheck, production build, Python contract suite under the compatible Python runtime, static checks and the repository preflight. GitHub Actions is the authoritative remote CI record linked from the release manifest. Computer Use verified the required production routes at 375px, 390px, 768px and 1440px with no horizontal overflow; one transient RPC read error recovered on isolated retry. Rejected-wallet-signature remains a disclosed unexercised live UI path.
 
-The original one-contract deployment and the earlier incorrect ActionGate pair are superseded. Their addresses and transactions remain in Git history only; no migration or source parity is claimed for them. The corrected pair above is the only current release target.
+## Historical deployment
+
+The superseded development pair was Merivox `0xe201A351b898D15eF8ACDfFF22f62aFabC834C3C` and ActionGate `0x263c5bAE66CcFcc04bA3546C3fa191F573C5D46b`. It is not the current frontend configuration or release target. Its known limitations are documented only for audit traceability.

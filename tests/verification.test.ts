@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { verifyReconciliationReadback } from '../lib/verification.ts';
+import { verifyAnnouncementReadback, verifyReconciliationReadback } from '../lib/verification.ts';
 import type { Nomination, Round } from '../lib/model.ts';
 
 const round = (overrides: Partial<Round> = {}): Round => ({
@@ -45,5 +45,54 @@ test('accepts an assignment that advances the cursor', () => {
   assert.equal(
     verifyReconciliationReadback(before, after, nomination(), null),
     'Application state verified: RECONCILING',
+  );
+});
+
+test('verifies publication by exact returned identifier, not a filtered page search', async () => {
+  const calls: string[] = [];
+  const result = await verifyAnnouncementReadback({
+    returnedId: '26',
+    expectedSpaceId: 'builders',
+    expectedAuthor: '0xAbC',
+    expectedContent: 'Weekly update',
+    expectedAuthorizationVersion: 7,
+    readAnnouncement: async id => {
+      calls.push(id);
+      return {
+        id,
+        space_id: 'builders',
+        author: '0xabc',
+        content: 'Weekly update',
+        content_digest: 'ff93c948131d0726be7cff94f3a1ff13a30782e2607fd0693d0a67bab78c8fbc',
+        authorization_version: 7,
+      };
+    },
+  });
+  assert.deepEqual(calls, ['26']);
+  assert.match(result, /Announcement 26 finalized/);
+});
+
+test('duplicate content cannot make a malformed or missing publication ID look successful', async () => {
+  await assert.rejects(
+    () => verifyAnnouncementReadback({
+      returnedId: undefined,
+      expectedSpaceId: 'builders',
+      expectedAuthor: '0xabc',
+      expectedContent: 'Weekly update',
+      expectedAuthorizationVersion: 7,
+      readAnnouncement: async () => ({ content: 'Weekly update' }),
+    }),
+    /valid announcement ID/,
+  );
+  await assert.rejects(
+    () => verifyAnnouncementReadback({
+      returnedId: '26',
+      expectedSpaceId: 'builders',
+      expectedAuthor: '0xabc',
+      expectedContent: 'Weekly update',
+      expectedAuthorizationVersion: 7,
+      readAnnouncement: async () => { throw new Error('temporary RPC failure'); },
+    }),
+    /temporary RPC failure/,
   );
 });

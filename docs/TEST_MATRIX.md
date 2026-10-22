@@ -4,16 +4,21 @@
 |---|---|---|---|
 | Frontend type safety | TypeScript compilation | `npm run typecheck` | Passing |
 | Frontend lint | ESLint | `npm run lint` | Passing |
-| Frontend unit/model | 14 tests including bounded `RETRY_REQUIRED` readback | `npm run test` | Passing |
+| Frontend unit/model | 18 tests including bounded `RETRY_REQUIRED`, exact publication-ID readback, duplicate content, temporary-RPC failure handling and governed lifecycle presentation | `npm run test` | Passing |
 | Frontend production | Next.js build including `/community` and governed routes | `npm run build` | Passing |
 | Network configuration | Studionet chain 61999 and RPC | `npm run network:check` | Passing |
 | Contract static | Both contracts, public methods, no ActionGate admin grant | `pytest tests/test_contract_static.py` | Passing |
-| Contract direct | Immutability, isolation and unauthorized gate calls | `pytest tests/test_contract_direct.py` | Passing |
-| Cross-contract runtime | Grant, revoke, applied state, unauthorized publication and stale replay | `pytest tests/test_cross_contract.py` | Passing |
-| GenVM validation | Pinned Direct Mode and live receipt/schema validation | `GENVM_VERSION=v0.6.0-rc3 python -m pytest -q` | Passing; no separate `genvm-lint` binary exists in the pinned toolchain |
-| Browser E2E | Premium routes, Choice Map, community publisher view and governed action readback | Computer Use against `https://merivox.vercel.app` | Passing for tested routes |
+| Contract direct | Immutability, isolation, unauthorized gate calls and 26-space pagination | `pytest tests/test_contract_direct.py tests/test_security_remediation.py` | Passing |
+| Cross-contract runtime | Grant, revoke, applied state, unauthorized publication, stale replay and 60 interleaved announcements | `pytest tests/test_cross_contract.py` | Passing |
+| Governance remediation | Four-member approval thresholds, tie/no-quorum, uncertainty, unresolved nominations, expired grant, zero-expiry revoke and envelope conflicts | `pytest tests/test_security_remediation.py` | Passing; 16 focused tests |
+| GenVM validation | Pinned Direct Mode and live receipt/schema validation | `py -3.13 -m pytest -q tests` | Passing; 31 tests; no separate `genvm-lint` binary exists in the pinned toolchain |
+| Browser E2E | Home, creator, community, round, Choice Map/alignment, ballot, outcome replay and activity directory at 375px, 390px, 768px and 1440px | Computer Use against `https://merivox.vercel.app`; all required production routes | Passing: no horizontal overflow; responsive permissions/announcements and route content rendered. One transient RPC read failure recovered on isolated retry; rejected-signature UI remains unexercised live |
+| Wallet/adversarial review | Signing, submission, provisional acceptance, finality, verification, failure, indeterminate, duplicate-write guard, wrong-chain/account checks and refresh recovery | Source review, 18 frontend tests, controlled readback cases and `docs/SECURITY.md` | Passing for implemented fail-closed paths; no live wallet-rejection transaction was requested or claimed |
 | Live Studionet grant | Grant, child application, authorized and unauthorized publication | `docs/LIVE_EVIDENCE.md`, round 1 | Passing |
 | Live Studionet revoke | Revoke, child application and revoked publication rejection | `docs/LIVE_EVIDENCE.md`, round 2 | Passing |
-| CI | Frontend and contract jobs on the submitted default branch | [Merivox CI #20](https://github.com/Bibidee/merivox/actions/runs/39670667483), commit `42731ec1e20ee13874a9fd63c256c1d4fcfd2aac` | Passing |
+| Dependency audit | Exact remediation lockfile, production/runtime scope separated from dev tooling | `npm audit --json`; `npm audit --omit=dev --json` | Production 0; dev-only 11 disclosed in `docs/SECURITY.md` |
+| CI | Frontend and contract jobs on the historical default branch | [Historical CI #21](https://github.com/Bibidee/merivox/actions/runs/39670892329), commit `22a7c2a4c268955185d4cee57c767ca90c963091` | Passing |
+| Final-readiness CI | Frontend and contract jobs on PR #2 final release head | [CI #37](https://github.com/Bibidee/merivox/actions/runs/39774221576), commit `dfd9640ff2501e05571d1d7fd58f4120543d83c0` | Passing |
+| Final-readiness branch | Local build/test and live release evidence | `remediation/post-submission-security-remediation`, final commit recorded in `HANDOFF_STATUS.md` | Passing; live final pair and both lifecycle paths verified |
 
-Mocked or compatible-runtime results are never represented as live GenLayer evidence. Every live claim includes a transaction hash, finality, canonical readback and source/deployment context.
+Mocked or compatible-runtime results are never represented as live GenLayer evidence. Every live claim includes a transaction hash, finality, canonical readback and source/deployment context. Browser observations are release evidence, while transient RPC recovery and unexercised wallet rejection remain disclosed limitations.

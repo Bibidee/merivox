@@ -29,10 +29,12 @@ Merivox has two Intelligent Contracts. `Merivox` owns immutable communities, rou
 
 - A community space has a unique immutable ID, name, founder and frozen 3–25 wallet roster. Only a frozen member may initiate a binding round.
 - A binding nomination carries exact `space_id`, `action_type`, `recipient_wallet`, `permission_scope`, `expires_at` and a deterministic `action_digest`. The envelope is part of validator comparison and cannot be edited after nomination.
-- Only a finalized, decided, quorum-satisfying, non-ambiguous binding round can become `APPROVED`; the Merivox contract then dispatches the exact envelope to ActionGate through a finalized child transaction.
+- Only a finalized, decided, quorum-satisfying binding round with a unique certain winner, an affirmative tally greater than half of the full frozen roster, no unresolved or ambiguous nomination, and a valid immutable envelope can become `APPROVED`; the Merivox contract then dispatches the exact envelope to ActionGate through a finalized child transaction. Result finality (`DECIDED`) never implies action authorization.
+- When a validator returns `EQUIVALENT` for binding nominations, the contract independently requires exact equality of `space_id`, `action_type`, `recipient_wallet`, `permission_scope`, `expires_at` and `action_digest`. A conflict is recorded as effective `AMBIGUOUS` with the original validator judgment retained, so the nomination cannot authorize protected execution.
 - ActionGate accepts permission changes only when the immediate transaction sender is its configured Merivox address and the message matches the current Merivox authorization version and digest. The original wallet is not treated as the internal caller.
 - Publisher permission reads are authoritative only when the version and digest still match Merivox. Announcement publication requires an effective grant, is append-only, and is verified by a post-finality readback.
-- Binding lifecycle values are `NOT_AUTHORIZED`, `DISPATCHED`, `APPLIED`, `PENDING_RECOVERY`, `SUPERSEDED` and `EXPIRED`. Recovery is bounded by a cooldown and cannot revive an expired or superseded envelope.
+- Binding lifecycle values are `NOT_AUTHORIZED`, `APPROVED`, `DISPATCHED`, `APPLIED`, `PENDING_RECOVERY`, `SUPERSEDED` and `EXPIRED`. `APPROVED` means the finalized governance result is eligible for dispatch but has not yet been sent to ActionGate; it never means applied. Recovery is bounded by a cooldown and cannot revive an expired or superseded envelope.
+- Community reads use offset/limit pages capped at 25. `list_spaces` offsets the immutable global space directory; ActionGate `list_announcements` offsets a per-community immutable index, so interleaved activity from other communities cannot shorten a page. Clients continue until a short authoritative page and never treat a short filtered global scan as end-of-data.
 
 ## Binding V1 limits
 
@@ -72,7 +74,7 @@ Unique keys must include round ID and sender/alternative identity. Reject duplic
 
 ## UX truth rules
 
-`SIGNING`, `SUBMITTED`, `ACCEPTED`, `FINALIZED`, `VERIFIED`, `FAILED`, `UNDETERMINED` must be distinct in UI. `ACCEPTED` is provisional. `FINALIZED` means the protocol completed successfully; `VERIFIED` additionally means the expected application-state transition was read back from the contract. Never mark voting, alignment, or final results complete on transaction acceptance. All illustrative graphics are labelled as examples; do not use fabricated contract addresses, votes or transactions.
+`SIGNING`, `SUBMITTED`, `ACCEPTED`, `FINALIZED`, `VERIFIED`, `FAILED`, `UNDETERMINED` must be distinct in UI. `ACCEPTED` is provisional. `FINALIZED` means the protocol completed successfully; `VERIFIED` additionally means the expected application-state transition was read back from the contract. Publication verification must use the finalized transaction's returned announcement ID, then verify exact community, author, content, digest and authorization version; a missing or malformed ID is not success. Never mark voting, alignment, or final results complete on transaction acceptance. All illustrative graphics are labelled as examples; do not use fabricated contract addresses, votes or transactions.
 
 ## Non-goals
 
