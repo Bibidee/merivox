@@ -2,7 +2,7 @@
 
 ## Release-candidate boundary
 
-The historical default branch is `main` commit `22a7c2a4c268955185d4cee57c767ca90c963091`, with live development pair `0xe201A351b898D15eF8ACDfFF22f62aFabC834C3C` / `0x263c5bAE66CcFcc04bA3546C3fa191F573C5D46b`. The final-readiness corrections are on `remediation/post-submission-security-remediation`, final commit `2aee80e5a30096c312c8453df2edbeaf44929a4f`, with earlier hardening commits preserved; no replacement pair or Vercel deployment exists yet.
+The historical default branch and development pair are retained as superseded reference evidence. The corrected release is on `remediation/post-submission-security-remediation`; its final commit, current pair and Vercel deployment are recorded in [`DEPLOYMENT.md`](DEPLOYMENT.md) and [`LIVE_EVIDENCE.md`](LIVE_EVIDENCE.md).
 
 ## GenLayer fit
 
@@ -26,6 +26,6 @@ Wallet identities are pseudonymous, validator availability can require bounded r
 
 ## Final-readiness findings
 
-- The deployed source can label a unique but ineligible binding tally `APPROVED`; current dispatch checks prevent unauthorized ActionGate delivery, but the label is misleading until redeployment.
-- The deployed publication view used a limited-page content/author search; the remediation verifies the exact finalized announcement ID and digest.
-- The remediation branch fixes both issues, adds per-space bounded pagination and regression coverage, passes the local frontend build plus 31 contract/cross-contract tests, and remains unmerged pending review.
+- The corrected source labels a binding result `APPROVED` only after the deterministic eligibility predicate passes; `DECIDED` remains separate from action authorization.
+- Publication verification reads the exact finalized announcement ID and checks the community, author, digest and authorization version.
+- Per-community bounded pagination, replay protection and parent/child provenance are covered by tests and the live final deployment evidence.

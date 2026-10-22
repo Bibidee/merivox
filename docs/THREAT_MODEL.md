@@ -1,6 +1,6 @@
 # Merivox governed-actions threat model
 
-This is the pre-submission final security audit of the governed-action path. The historical pair remains the only live evidence source; the final-readiness branch is a proposed replacement and has not been deployed.
+This is the pre-submission final security audit of the governed-action path. The corrected pair is live on Studionet 61999; the earlier pair remains historical and is not used as current proof.
 
 ## Scope
 
@@ -31,4 +31,4 @@ This review covers the browser, the Merivox Intelligent Contract, the MerivoxAct
 
 ## Residual risks
 
-Wallets are pseudonymous, RPC availability can delay readback, and validator semantic judgment can remain unavailable. Those conditions must remain visible as uncertainty or pending state; they are not grounds to fabricate success. The historical deployment still exposes the false-`APPROVED` label and limited publication verification until a replacement pair and approved frontend deployment exist.
+Wallets are pseudonymous, RPC availability can delay readback, and validator semantic judgment can remain unavailable. Those conditions must remain visible as uncertainty or pending state; they are not grounds to fabricate success. The current frontend and pair are hardened, while the historical pair retains its documented limitations and is not presented as the final release.

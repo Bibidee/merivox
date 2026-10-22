@@ -1,51 +1,36 @@
 # MERIVOX V1 — remediation handoff
 
-This branch is the remediation release candidate. The current verdict is `READY WITH DISCLOSED LIMITATIONS`; [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) contains the complete evidence ledger.
+Current verdict: `READY WITH DISCLOSED UI LIMITATIONS`. The corrected implementation is deployed, both live binding lifecycles are verified through finalized cross-contract application, and the final evidence is recorded in [`docs/LIVE_EVIDENCE.md`](docs/LIVE_EVIDENCE.md).
 
 ## Current verified state
 
-- Premium Decision Studio frontend and Choice Map identity are preserved.
-- This branch adds a contract/frontend reconciliation window, prompt/data hardening, canonical round-return handling, verified application readback and complete activity pagination.
-- Local TypeScript tests, lint, typecheck, build, static checks and Direct Mode tests pass after the remediation changes.
-- The committed branch is pushed to GitHub and tracked by [draft PR #1](https://github.com/Bibidee/merivox/pull/1); the current Vercel production deployment is READY and its route smoke checks pass.
-- The remediation contract is finalized on Studionet with byte-for-byte source parity; deployment details are in [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
-- Fresh CLI lifecycle evidence is now recorded for live `EQUIVALENT`, `DISTINCT` and `AMBIGUOUS` classifications, including adversarial nomination data; round 3 finalized as `DECIDED` with winner choice `1`, reason `UNIQUE_HIGHEST_TALLY`, and a finalized `2 / 1 / 1` tally. GitHub Actions run [#14](https://github.com/Bibidee/merivox/actions/runs/39574133617) passed both contract and frontend jobs. Production browser route/readback, connect/disconnect, wrong-chain detection and switching to chain 61999 were also verified; no private key is accessed by the agent.
+- Merivox’s premium Decision Studio and Choice Map identity are preserved.
+- The corrected branch hardens semantic reconciliation, immutable nominations, frozen eligibility, deterministic tallying, bounded retries, cross-contract authorization, stale-action handling and production readback.
+- Corrected contracts are deployed on Studionet 61999 and reciprocally bound.
+- Vercel production is live at [merivox.vercel.app](https://merivox.vercel.app) with the corrected contract addresses.
+- Round 1 grant is finalized, dispatched through a finalized child transaction, read back as `APPLIED` / `ACTIVE`, and used for a successful Bob publication.
+- Round 2 contains two same-envelope revoke nominations with validator-backed `DISTINCT` and `EQUIVALENT` alignment, three finalized votes, deadline-gated finalization, finalized parent/child delivery and canonical revoke readback.
+- Bob’s post-revoke publication was rejected by a finalized ActionGate transaction, and the previous grant was finalized as `SUPERSEDED` by the current revoke authorization.
+- An early `finalize(2)` attempt was correctly rejected by the contract with `Voting deadline has not passed`; the later post-deadline finalization is separately evidenced.
 
-## Final browser coverage disclosure
+## Release artifacts
 
-- Verified: all production routes, new-round form progression, activity search/filtering, round/Choice Map readback, ballot tally, outcome readback, wallet connect/disconnect/reconnect, wrong-network warning and Studionet switching.
-- Not exercised: account switching, rejected signatures, refresh/recovery or duplicate prevention during an in-flight transaction, and mobile viewport behavior. These are disclosed limitations because round 3 was already terminal and no new write transaction was repeated only to create test states.
-- The hosted RPC produced transient fetch errors on first ballot/outcome reads; the visible Retry flow recovered both pages.
+- Branch: `remediation/post-submission-security-remediation`
+- Corrected Merivox: `0xB81D80f2661a78a0742B190fE44f15149156a6DF`
+- Corrected ActionGate: `0x5DE12E4E0a80A621Af8Cb4c453FaE569df857206`
+- Merivox source SHA-256: `98C1A343C29C600F1BC44B8B0B48BCBCD10648EDB6DFE4F6782CAA715AADC4CE`
+- ActionGate source SHA-256: `E9B7E904624C4860F1BCCD0F72FC2D96794B617E33E91F73204576AEF2ADA305`
+- Vercel: [merivox.vercel.app](https://merivox.vercel.app)
+- PR: [#2](https://github.com/Bibidee/merivox/pull/2) — open for reassessment; do not merge silently.
 
-## Historical starter inventory (superseded)
+## Final evidence
 
-- Original premium landing page, responsive Choice Map and visual style.
-- Guided decision-round creation form, roster validation and unsigned preview.
-- Round workspace with contract reads, nomination submission and transition request.
-- Public activity list and transparent method page.
-- Dedicated alignment, ballot and outcome pages **visibly gated until implemented**, no fake live data.
-- Injected-wallet integration starter and transaction status dock.
-- Python contract starter with immutable round, roster and bounded nomination storage.
-- Configuration fixed to Studionet 61999 and repository-local CLI 0.39.1.
-- Source/spec/security/deployment documentation and complete Codex build prompt.
+- Round-2 finalization: `0xf006bfb60f07fff646ccf343a48ee31f48a2e9e856197539aad4d25ee02985e2`
+- Revoke dispatch parent / child: `0x87679ec6d1e0b218a498af811af8544030873c9b9492b2096886b7692a931ed8` / `0xf857c738f68d77420f10ce0dc817e47083492d89da3c9707b0ba938ac0ef960b`
+- Revoke refresh: `0x8d9e157263c39b7193f66a184c8d5e69b2b0b01a2ef7aff3f786efb6e543f818`
+- Post-revoke rejection: `0x83b521cd6c6476fc054139458d8a1d018ecfc16b6ab980f089240e7ab71a6e56`
+- Stale grant supersession: `0x8ffd7e89fb7019ffcc045cb15807eaf86f707cfd86f1d72f5415e5c7fe681ec2`
 
-## Historical checks run during handoff creation
+The final commit, CI run and PR update are recorded after the documentation commit is pushed. Mobile viewport and rejected-signature UI flows remain disclosed limitations; no private key is accessed by the agent.
 
-- `node scripts/network-check.mjs`: passed.
-- `node --experimental-strip-types --test tests/*.test.ts`: 6 passed.
-- `python -m pytest -q tests/test_contract_static.py`: 2 passed.
-- `python -m compileall -q contracts`: passed.
-- Case-insensitive scan for unrelated project names in all authored source/docs: zero hits.
-
-## Historical items not run during handoff creation
-
-- `npm install`, because the npm registry could not be resolved from the handoff runtime.
-- `npm run typecheck`, `npm run lint`, `npm run build` (frontend dependencies unavailable here).
-- GenLayer Direct Mode, GenVM lint, any consensus or wallet integration test.
-- Contract deployment, Vercel deployment, hosted browser tests or live outcomes.
-
-## Historical missing-work list (superseded)
-
-GenLayer semantic reconciliation and validator reproduction; ballot freezing; voting; tie and quorum finalization; retry/fail-safe handling; finality decoding and state-readback hardening; comprehensive tests; final deployment and source parity verification.
-
-The current verified deployment and limitations are recorded above and in `docs/DEPLOYMENT.md`.
+No private key is accessed by the agent. Wallet signing is not required for the existing unlocked CLI accounts used in this verification.

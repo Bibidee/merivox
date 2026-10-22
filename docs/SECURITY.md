@@ -1,6 +1,6 @@
 # Merivox security model and pre-submission final audit
 
-This document covers both the historical development deployment and the proposed final-readiness branch. The deployed addresses and finalized transactions remain historical evidence; final-readiness changes are not live.
+This document covers the final pre-submission implementation and its live Studionet deployment. The earlier pair remains historical evidence only; the current addresses and finalized transactions are recorded in [`LIVE_EVIDENCE.md`](LIVE_EVIDENCE.md).
 
 ## Remediation findings and disposition
 
@@ -9,7 +9,7 @@ This document covers both the historical development deployment and the proposed
 | High | `finalize()` marked every unique binding winner `APPROVED` before checking quorum, full-roster affirmative majority, certainty, resolution and envelope validity | Shared deterministic eligibility predicate now drives both approval state and dispatch; result finality remains separate from action authorization | Dispatch already failed closed, but the deployed state/UI could mislabel an ineligible round |
 | Medium | Binding `EQUIVALENT` could merge incompatible typed action envelopes | Exact `space_id`, action type, recipient, scope, expiry and digest comparison; conflict becomes conservative `AMBIGUOUS` while recording validator provenance | Existing deployed source requires replacement to enforce this on-chain |
 | Medium | Spaces and announcements were limited to first-page reads; ActionGate filtered after global pagination | Complete space pages, per-community bounded announcement index, consistent offset/limit semantics and exact-ID publication readback | Existing deployed frontend/source retain the older omission and false-match risks |
-| Tooling | Fresh audit found runtime advisories in Next 16.3.2 and tsx/esbuild | Upgraded Next and eslint-config-next to 16.4.2 and tsx to 4.23.15; production audit is now zero | Historical Vercel deployment remains on its older dependency set until an approved frontend deploy |
+| Tooling | Fresh audit found runtime advisories in Next 16.3.2 and tsx/esbuild | Upgraded Next and eslint-config-next to 16.4.2 and tsx to 4.23.15; production audit is now zero | The matching Vercel deployment uses the corrected lockfile; dev-only advisories remain disclosed below |
 
 The remediation deliberately does not replace GenLayer `0.39.1`. Its remaining full-tree advisories are dev-only and are listed below with their root package and exploitability assessment.
 
@@ -17,7 +17,7 @@ The remediation deliberately does not replace GenLayer `0.39.1`. Its remaining f
 
 Fresh `npm audit --json` after the safe updates reports 11 dev-tree findings: 5 high, 2 critical and 4 moderate; `npm audit --omit=dev --json` reports zero. The high findings are the `eslint-config-next@16.4.2` → `@next/eslint-plugin-next` → `fast-glob`/`micromatch`/`braces` chain (`GHSA-vfj7-8cjw-p6xm`), used only by lint tooling and not shipped in the static production bundle. The two critical findings are the GenLayer 0.39.1 bundled Vitest/tinypool path (`GHSA-5gmw-xhrv-c9v3`, `GHSA-85c8-ppgw-ccpr`); they affect local test/CLI tooling, not browser runtime or Vercel output. Moderate findings are the same GenLayer Vitest path (`GHSA-82fw-gwwq-j7x9`, `GHSA-qxg6-89mg-rqv8`) and its `dockerode`/nested `uuid` dependency (`GHSA-w5hq-g745-h8pq`).
 
-The registry's suggested replacement for the GenLayer finding is an incompatible `genlayer` major/version change, so it was not applied. No `npm audit fix --force` was used. The remaining risk is confined to trusted developer/CI execution; do not run the CLI or test runner on untrusted project code without the normal CI isolation controls. Re-audit is required before any remediation deployment.
+The registry's suggested replacement for the GenLayer finding is an incompatible `genlayer` major/version change, so it was not applied. No `npm audit fix --force` was used. The remaining risk is confined to trusted developer/CI execution; do not run the CLI or test runner on untrusted project code without the normal CI isolation controls. Re-audit remains part of future dependency maintenance.
 
 This document defines the security invariants and audit scope for the deployed V1. The contract and frontend were checked against these invariants with the pinned Direct Mode suite and live Studionet readback.
 
