@@ -2,7 +2,7 @@
 
 ## Release-candidate boundary
 
-The historical default branch is `main` commit `22a7c2a4c268955185d4cee57c767ca90c963091`, with live development pair `0xe201A351b898D15eF8ACDfFF22f62aFabC834C3C` / `0x263c5bAE66CcFcc04bA3546C3fa191F573C5D46b`. The final-readiness corrections are on `remediation/post-submission-security-remediation`, commits `7a6e1b2b06fc8183cd44cd2ae7b6ef0aeb849f32` and `e57dbeaa37e7d5a25e44d91cb604cde30c3379c5`; no replacement pair or Vercel deployment exists yet.
+The historical default branch is `main` commit `22a7c2a4c268955185d4cee57c767ca90c963091`, with live development pair `0xe201A351b898D15eF8ACDfFF22f62aFabC834C3C` / `0x263c5bAE66CcFcc04bA3546C3fa191F573C5D46b`. The final-readiness corrections are on `remediation/post-submission-security-remediation`, final commit `2aee80e5a30096c312c8453df2edbeaf44929a4f`, with earlier hardening commits preserved; no replacement pair or Vercel deployment exists yet.
 
 ## GenLayer fit
 

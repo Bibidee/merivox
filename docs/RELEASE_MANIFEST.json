@@ -16,9 +16,9 @@
   },
   "finalReadiness": {
     "branch": "remediation/post-submission-security-remediation",
-    "codeCommit": "7a6e1b2b06fc8183cd44cd2ae7b6ef0aeb849f32",
+    "codeCommit": "2aee80e5a30096c312c8453df2edbeaf44929a4f",
     "dependencyCommit": "e57dbeaa37e7d5a25e44d91cb604cde30c3379c5",
-    "merivoxSha256": "8AA20FFB54103B2F467CC6C0CC71C80BE1DAA52243881F9020FA690BFD5402D1",
+    "merivoxSha256": "98C1A343C29C600F1BC44B8B0B48BCBCD10648EDB6DFE4F6782CAA715AADC4CE",
     "actionGateSha256": "E9B7E904624C4860F1BCCD0F72FC2D96794B617E33E91F73204576AEF2ADA305",
     "status": "local-tested-not-deployed",
     "requiresExplicitApproval": true

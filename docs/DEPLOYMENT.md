@@ -20,10 +20,10 @@ Deployment transactions, complete grant/revoke lifecycle hashes, parent-child re
 ## Final-readiness release candidate
 
 - Branch: `remediation/post-submission-security-remediation` (legacy branch name retained for PR history)
-- Governance/pagination/publication code commit: `7a6e1b2b06fc8183cd44cd2ae7b6ef0aeb849f32`
+- Final-readiness code commit: `2aee80e5a30096c312c8453df2edbeaf44929a4f`
 - Dependency patch commit: `e57dbeaa37e7d5a25e44d91cb604cde30c3379c5`
 - Status: local tests and production build pass; not deployed, not merged, no production configuration changed
-- Proposed Merivox SHA-256: `8AA20FFB54103B2F467CC6C0CC71C80BE1DAA52243881F9020FA690BFD5402D1`
+- Proposed Merivox SHA-256: `98C1A343C29C600F1BC44B8B0B48BCBCD10648EDB6DFE4F6782CAA715AADC4CE`
 - Proposed ActionGate SHA-256: `E9B7E904624C4860F1BCCD0F72FC2D96794B617E33E91F73204576AEF2ADA305`
 
 A new compatible Merivox/ActionGate pair is required to correct the on-chain `action_status` semantics and add the per-space announcement index. Existing production state is not rewritten.
