@@ -1,6 +1,6 @@
 # Merivox V1 — Final Pre-Submission Release — deployment and verification ledger
 
-This ledger describes the corrected immutable contract pair, the Vercel production deployment, and the live Studionet lifecycle evidence. The earlier development pair is retained only as historical context; Merivox is prepared for submission but has not been submitted or merged.
+This ledger describes the corrected immutable contract pair, the Vercel production deployment, and the live Studionet lifecycle evidence. The earlier development pair is retained only as historical context; the release is merged into `main` and production-ready, but Merivox has not been submitted externally.
 
 ## Current release target
 

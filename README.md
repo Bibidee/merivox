@@ -2,7 +2,7 @@
 
 **Production V1 — GenLayer Studionet 61999**
 
-Merivox is the Decision Studio: a backendless GenLayer application for forming more representative community ballots. Eligible members propose actionable alternatives; independent validators classify whether those alternatives are materially equivalent before the ballot freezes. Members, not AI, vote on the final choices. This release is prepared for submission and has not been submitted or merged.
+Merivox is the Decision Studio: a backendless GenLayer application for forming more representative community ballots. Eligible members propose actionable alternatives; independent validators classify whether those alternatives are materially equivalent before the ballot freezes. Members, not AI, vote on the final choices. This release is merged into `main` and production-ready; it has not been submitted externally.
 
 ## Current status
 

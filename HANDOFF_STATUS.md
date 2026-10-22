@@ -1,6 +1,6 @@
 # MERIVOX V1 — Final Pre-Submission Release
 
-Current verdict: `READY WITH DISCLOSED LIMITATIONS`. Merivox is prepared for submission but has not been submitted or merged. The corrected implementation is deployed, both live binding lifecycles are verified through finalized cross-contract application, and the final evidence is recorded in [`docs/LIVE_EVIDENCE.md`](docs/LIVE_EVIDENCE.md).
+Current verdict: `READY WITH DISCLOSED LIMITATIONS`. Merivox is merged into `main` and prepared for external submission, but has not been submitted. The corrected implementation is deployed, both live binding lifecycles are verified through finalized cross-contract application, and the final evidence is recorded in [`docs/LIVE_EVIDENCE.md`](docs/LIVE_EVIDENCE.md).
 
 ## Current verified state
 
