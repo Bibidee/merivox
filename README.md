@@ -6,7 +6,7 @@ Merivox is the Decision Studio: a backendless GenLayer application for forming m
 
 ## Current status
 
-The expanded Merivox V1 preserves the original Decision Studio identity while extending it with a second, contract-enforced ActionGate for governed community announcements. The final-readiness branch hardens binding approval, typed-envelope reconciliation, pagination, governance presentation and publication readback. The corrected pair is deployed to Studionet 61999 and the matching frontend is live at [merivox.vercel.app](https://merivox.vercel.app); historical development evidence remains documented separately.
+The expanded Merivox V1 preserves the original Decision Studio identity while extending it with a second, contract-enforced ActionGate for governed community announcements. The final release hardens binding approval, typed-envelope reconciliation, pagination, governance presentation and publication readback. The corrected pair is deployed to Studionet 61999 and the matching frontend is live at [merivox.vercel.app](https://merivox.vercel.app); historical development evidence remains documented separately.
 
 | Area | Status |
 |---|---|
@@ -16,8 +16,8 @@ The expanded Merivox V1 preserves the original Decision Studio identity while ex
 | Frozen ballot, voting, quorum and tie result | Implemented and covered by Direct Mode tests |
 | Current Studionet lifecycle evidence | Corrected pair demonstrates live grant and revoke rounds, validator-backed consensus, finalized child delivery, publication controls and replay protection |
 | Current deployment | Merivox and ActionGate are mutually bound on Studionet 61999; exact addresses and receipts are in `docs/LIVE_EVIDENCE.md` |
-| Release branch | `remediation/post-submission-security-remediation`; final release commit and open PR are recorded in `HANDOFF_STATUS.md` |
-| CI verification | The current release commit is verified by GitHub Actions; the run link is recorded in `docs/TEST_MATRIX.md` |
+| Release branch | `main`; PRs [#2](https://github.com/Bibidee/merivox/pull/2) and [#3](https://github.com/Bibidee/merivox/pull/3) are merged, with release identity recorded in `HANDOFF_STATUS.md` |
+| CI verification | Main-branch CI [#43](https://github.com/Bibidee/merivox/actions/runs/39777522684) passed on documentation head `6b2d856b89d9fd9a4d54c53598c957bb8e45f955` |
 
 ## Non-negotiable product definition
 
@@ -96,7 +96,7 @@ See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for exact deployment, source-pari
 
 ## Final pre-submission hardening
 
-The final-readiness branch prevents a unique-but-ineligible binding result from being labelled `APPROVED`, enforces exact typed action-envelope equality before validator-equivalent nominations merge, indexes announcements per community, presents approved-versus-applied governance states, reads all bounded pages and verifies publication by the finalized announcement ID. It also records the remaining development-tool audit limitations in [`docs/SECURITY.md`](docs/SECURITY.md).
+The final release prevents a unique-but-ineligible binding result from being labelled `APPROVED`, enforces exact typed action-envelope equality before validator-equivalent nominations merge, indexes announcements per community, presents approved-versus-applied governance states, reads all bounded pages and verifies publication by the finalized announcement ID. It also records the remaining development-tool audit limitations in [`docs/SECURITY.md`](docs/SECURITY.md).
 
 The final pair is intentionally a fresh immutable deployment; historical spaces, decisions and permissions remain on the superseded pair and were not silently migrated. The live final pair, Vercel deployment and lifecycle receipts are recorded in [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 

@@ -2,7 +2,7 @@
 
 ## Release-candidate boundary
 
-The historical default branch and development pair are retained as superseded reference evidence. The corrected release is on `remediation/post-submission-security-remediation`; its final commit, current pair and Vercel deployment are recorded in [`DEPLOYMENT.md`](DEPLOYMENT.md) and [`LIVE_EVIDENCE.md`](LIVE_EVIDENCE.md).
+The historical default branch and development pair are retained as superseded reference evidence. The corrected release is merged into `main`; production implementation commit `778489c93f3c9269b21e53c9ad7204b2706faf37`, documentation head `6b2d856b89d9fd9a4d54c53598c957bb8e45f955`, current pair and Vercel deployment are recorded in [`DEPLOYMENT.md`](DEPLOYMENT.md) and [`LIVE_EVIDENCE.md`](LIVE_EVIDENCE.md).
 
 ## GenLayer fit
 
