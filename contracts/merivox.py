@@ -1304,11 +1304,12 @@ class Merivox(gl.Contract):
         r = self._get_round(round_id)
         authorization = self.authorizations.get(round_id)
         if authorization is None:
+            lifecycle = r.action_status if r.binding else 'NOT_BINDING'
             return {
                 'exists': False,
                 'round_id': round_id,
                 'space_id': r.space_id,
-                'lifecycle': 'NOT_AUTHORIZED' if r.binding else 'NOT_BINDING',
+                'lifecycle': lifecycle,
                 'action_status': r.action_status,
             }
         result = self._authorization_dict(authorization)

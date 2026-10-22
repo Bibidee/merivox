@@ -7,6 +7,7 @@ import { useApp } from '@/components/AppProviders';
 import { readChain, sendChain } from '@/lib/chain';
 import { contractConfigured } from '@/lib/config';
 import { MIN_ROUND_AFTER_NOMINATION_SECONDS, ROUND_RULES, isWallet, shortAddress, validateQuestion, type CommunitySpace } from '@/lib/model';
+import { readAllPages } from '@/lib/rounds';
 
 const localInput = (timestamp: number) => new Date(timestamp).toISOString().slice(0, 16);
 const now = () => localInput(Date.now() + ROUND_RULES.minCreationLeadSeconds * 1000);
@@ -30,7 +31,7 @@ export default function NewRound() {
   const roster = [...new Set(members.split(/[\s,;]+/).map(value => value.trim()).filter(Boolean))];
   const eligible = Boolean(account && roster.some(value => value.toLowerCase() === account.toLowerCase()));
   useEffect(() => { const params = new URLSearchParams(window.location.search); if (params.get('binding') === '1') { setBindingMode(true); setSpaceId(params.get('space') ?? ''); } }, []);
-  useEffect(() => { if (!contractConfigured()) return; void readChain<Array<Record<string, unknown>>>('list_spaces', [BigInt(0), BigInt(25)]).then(items => setSpaces(items.map(item => ({ space_id: String(item.space_id ?? ''), name: String(item.name ?? ''), founder: String(item.founder ?? ''), members: Array.isArray(item.members) ? item.members.map(String) : [], member_count: Number(item.member_count ?? 0), created_at: Number(item.created_at ?? 0) })))).catch(() => setSpaces([])); }, []);
+  useEffect(() => { if (!contractConfigured()) return; void readAllPages((offset, limit) => readChain<Array<Record<string, unknown>>>('list_spaces', [BigInt(offset), BigInt(limit)])).then(items => setSpaces(items.map(item => ({ space_id: String(item.space_id ?? ''), name: String(item.name ?? ''), founder: String(item.founder ?? ''), members: Array.isArray(item.members) ? item.members.map(String) : [], member_count: Number(item.member_count ?? 0), created_at: Number(item.created_at ?? 0) })))).catch(() => setSpaces([])); }, []);
 
   const next = () => {
     const issue = step === 0 ? validateQuestion(question) : step === 1

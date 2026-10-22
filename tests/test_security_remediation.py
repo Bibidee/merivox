@@ -1,4 +1,4 @@
-"""Focused post-submission governance and envelope regression coverage.
+"""Focused pre-submission governance and envelope regression coverage.
 
 These tests run in Direct Mode. They exercise deterministic contract state
 after the validator boundary; mocked model responses are never live evidence.
@@ -85,6 +85,10 @@ def test_four_member_three_and_four_affirmative_votes_are_approved(direct_vm, di
     status, result = finalize_at_deadline(contract, direct_vm, round_id)
     assert status == 'DECIDED'
     assert result['action_status'] == 'APPROVED'
+    binding = contract.get_binding_action(round_id)
+    assert binding['exists'] is False
+    assert binding['lifecycle'] == 'APPROVED'
+    assert binding['action_status'] == 'APPROVED'
 
 
 def test_four_member_four_affirmative_votes_are_approved(direct_vm, direct_deploy, direct_owner, direct_alice, direct_bob, direct_charlie):

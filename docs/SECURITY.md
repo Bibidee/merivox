@@ -1,15 +1,15 @@
-# Merivox security model and post-submission audit
+# Merivox security model and pre-submission final audit
 
-This document covers both the submitted production release and the proposed remediation branch. The deployed addresses and finalized transactions remain historical evidence; remediation changes are not live.
+This document covers both the historical development deployment and the proposed final-readiness branch. The deployed addresses and finalized transactions remain historical evidence; final-readiness changes are not live.
 
 ## Remediation findings and disposition
 
-| Severity | Finding | Remediation | Submitted production impact |
+| Severity | Finding | Remediation | Historical deployment impact |
 |---|---|---|---|
 | High | `finalize()` marked every unique binding winner `APPROVED` before checking quorum, full-roster affirmative majority, certainty, resolution and envelope validity | Shared deterministic eligibility predicate now drives both approval state and dispatch; result finality remains separate from action authorization | Dispatch already failed closed, but the deployed state/UI could mislabel an ineligible round |
 | Medium | Binding `EQUIVALENT` could merge incompatible typed action envelopes | Exact `space_id`, action type, recipient, scope, expiry and digest comparison; conflict becomes conservative `AMBIGUOUS` while recording validator provenance | Existing deployed source requires replacement to enforce this on-chain |
 | Medium | Spaces and announcements were limited to first-page reads; ActionGate filtered after global pagination | Complete space pages, per-community bounded announcement index, consistent offset/limit semantics and exact-ID publication readback | Existing deployed frontend/source retain the older omission and false-match risks |
-| Tooling | Fresh audit found runtime advisories in Next 16.3.2 and tsx/esbuild | Upgraded Next and eslint-config-next to 16.4.2 and tsx to 4.23.15; production audit is now zero | Submitted Vercel deployment remains on its historical dependency set until an approved frontend deploy |
+| Tooling | Fresh audit found runtime advisories in Next 16.3.2 and tsx/esbuild | Upgraded Next and eslint-config-next to 16.4.2 and tsx to 4.23.15; production audit is now zero | Historical Vercel deployment remains on its older dependency set until an approved frontend deploy |
 
 The remediation deliberately does not replace GenLayer `0.39.1`. Its remaining full-tree advisories are dev-only and are listed below with their root package and exploitability assessment.
 

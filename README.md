@@ -6,7 +6,7 @@ Merivox is a backendless GenLayer application for forming more representative co
 
 ## Current status
 
-The submitted release preserves the original decision-studio identity while extending it with a second, contract-enforced ActionGate for governed community announcements. Its Studionet grant and revoke evidence is preserved as historical release evidence. A separate post-submission remediation branch hardens binding approval, typed-envelope reconciliation, pagination and publication readback; it has not been deployed or merged.
+The expanded Merivox V1 preserves the original decision-studio identity while extending it with a second, contract-enforced ActionGate for governed community announcements. Its Studionet grant and revoke evidence is preserved as historical development-deployment evidence. The final-readiness branch hardens binding approval, typed-envelope reconciliation, pagination, governance presentation and publication readback; it has not been deployed or merged.
 
 | Area | Status |
 |---|---|
@@ -15,9 +15,9 @@ The submitted release preserves the original decision-studio identity while exte
 | Validator-backed semantic reconciliation | Implemented with conservative uncertainty/fallback behavior |
 | Frozen ballot, voting, quorum and tie result | Implemented and covered by Direct Mode tests |
 | Current Studionet lifecycle evidence | Corrected pair demonstrates live grant and revoke rounds, validator-backed `DISTINCT`/`EQUIVALENT`, finalized child delivery and publication controls |
-| Submitted production release | Live at the documented pair; all significant receipts are recorded in `docs/LIVE_EVIDENCE.md` |
-| Remediation branch | `remediation/post-submission-security-remediation`, commits `7a6e1b2` and `e57dbea`; local verification passing, not deployed |
-| CI verification | Submitted `main` passed CI #21; the remediation PR is intentionally unmerged and requires review |
+| Historical development deployment | Live at the documented pair; all significant receipts are recorded in `docs/LIVE_EVIDENCE.md` |
+| Final-readiness branch | `remediation/post-submission-security-remediation`, commits `7a6e1b2`, `e57dbea` and the final-readiness commits; local verification passing, not deployed |
+| CI verification | Historical `main` passed CI #21; the final-readiness PR remains unmerged and requires review |
 
 ## Non-negotiable product definition
 
@@ -94,9 +94,9 @@ The browser never contains private keys, and no application backend or database 
 
 See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for exact deployment, source-parity, live lifecycle and verification evidence.
 
-## Post-submission remediation
+## Pre-submission final hardening
 
-The remediation branch is a proposed replacement implementation, not a claim about the currently deployed bytecode. It prevents a unique-but-ineligible binding result from being labelled `APPROVED`, enforces exact typed action-envelope equality before validator-equivalent nominations merge, indexes announcements per community, reads all bounded pages and verifies publication by the finalized announcement ID. It also records the remaining development-tool audit limitations in [`docs/SECURITY.md`](docs/SECURITY.md).
+The final-readiness branch is a proposed release candidate, not a claim about the historical deployed bytecode. It prevents a unique-but-ineligible binding result from being labelled `APPROVED`, enforces exact typed action-envelope equality before validator-equivalent nominations merge, indexes announcements per community, presents approved-versus-applied governance states, reads all bounded pages and verifies publication by the finalized announcement ID. It also records the remaining development-tool audit limitations in [`docs/SECURITY.md`](docs/SECURITY.md).
 
 No contract redeployment, Vercel configuration change or merge was performed. A replacement Merivox/ActionGate pair is required before the on-chain approval-state correction can exist in production; existing historical spaces, decisions and permissions would remain on the old pair and would need an explicit migration policy.
 

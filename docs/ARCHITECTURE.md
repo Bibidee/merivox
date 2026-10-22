@@ -42,3 +42,5 @@ The query-parameter pattern supports static export; browser reads do not rely on
 ## Verification state
 
 Live Choice Maps are reconstructed from finalized contract reads. Illustrative content is labelled as a concept preview and is never used as live round state. The transaction helper distinguishes signing, submission, provisional acceptance, finality, verified application state, failure and indeterminate states; writes require an injected wallet and chain `61999`.
+
+Governed outcomes keep voting and execution separate: `DECIDED` describes the ballot result, `APPROVED` means the immutable action envelope is eligible for dispatch, `DISPATCHED` means the parent submitted a finalized child message, and `APPLIED` is shown only after ActionGate confirms the expected permission version, digest and effective state. The community workspace reads the frozen roster, each member's permission, binding-round history and append-only announcements directly from the two contracts using bounded pagination.

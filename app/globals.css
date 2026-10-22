@@ -240,6 +240,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .permission-card h3 { margin: 5px 0 0; font-size: 17px; }
 .permission-card b, .permission-card small { display: block; }
 .permission-card small { margin-top: 3px; color: var(--muted); font: 10px var(--mono); }
+.permission-card .permission-meta { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 12px; padding-top: 9px; border-top: 1px solid var(--line); color: var(--muted); font: 10px var(--mono); text-transform: uppercase; }
+.permission-card.current-permission { margin-top: 14px; }
+.community-history { margin: 22px 0; }
 .publish-row { display: flex; gap: 12px; margin: 15px 0; }
 .publish-row textarea { flex: 1; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--ivory); resize: vertical; }
 .announcement-list { display: grid; gap: 10px; margin-top: 15px; }
@@ -473,6 +476,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .form-actions .right { width: 100%; }
   .form-actions .right .btn { width: 100%; }
   .two-inputs { grid-template-columns: 1fr; gap: 0; }
+  .permission-card { grid-template-columns: 1fr 1fr; }
+  .permission-card .permission-meta { flex-direction: column; }
   .metric-strip { grid-template-columns: repeat(2,1fr); }
   .metric:nth-child(2) { border-right: 0; }
   .metric:nth-child(3) { border-right: 1px solid var(--line); }

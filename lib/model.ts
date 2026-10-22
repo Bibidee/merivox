@@ -10,7 +10,7 @@ export type RoundStatus =
 
 export type Judgment = 'EQUIVALENT' | 'DISTINCT' | 'AMBIGUOUS' | 'UNRESOLVED' | 'UNREVIEWED';
 export type ActionType = 'GRANT_PUBLISHER' | 'REVOKE_PUBLISHER';
-export type ActionLifecycle = 'NOT_AUTHORIZED' | 'DISPATCHED' | 'APPLIED' | 'PENDING_RECOVERY' | 'SUPERSEDED' | 'EXPIRED' | 'NOT_BINDING';
+export type ActionLifecycle = 'NOT_AUTHORIZED' | 'APPROVED' | 'DISPATCHED' | 'APPLIED' | 'PENDING_RECOVERY' | 'SUPERSEDED' | 'EXPIRED' | 'NOT_BINDING';
 export type TxPhase = 'IDLE' | 'SIGNING' | 'SUBMITTED' | 'ACCEPTED' | 'FINALIZED' | 'VERIFIED' | 'FAILED' | 'UNDETERMINED';
 
 export const ROUND_RULES = {
@@ -121,6 +121,19 @@ export interface CommunitySpace {
   created_at: number;
 }
 
+export interface GovernanceRoundSummary {
+  id: string;
+  question: string;
+  status: RoundStatus;
+  action_status: ActionLifecycle | string;
+  member_count: number;
+  nomination_count: number;
+  choice_count: number;
+  voter_count: number;
+  space_id: string;
+  binding?: boolean;
+}
+
 export interface BindingAuthorization extends BindingAction {
   exists: boolean;
   round_id: string;
@@ -147,6 +160,7 @@ export interface Permission {
   action_digest: string;
   applied_at?: number;
   reason: string;
+  readable?: boolean;
 }
 
 export interface Announcement {
