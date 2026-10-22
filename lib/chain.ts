@@ -31,6 +31,13 @@ const activeWrites = new Set<string>();
 
 export type ApplicationVerifier = (receipt: GenLayerTransaction) => Promise<string | void>;
 
+export function writeFailureDetail(error: unknown): string {
+  const message = error instanceof Error && error.message.trim()
+    ? error.message.trim()
+    : 'The wallet signature was rejected or the transaction could not be submitted.';
+  return `Wallet signature was not accepted: ${message}`;
+}
+
 function argumentKey(value: unknown): string {
   return JSON.stringify(value, (_key, item) => typeof item === 'bigint' ? `${item}n` : item);
 }
@@ -76,12 +83,18 @@ export async function sendChainAt(
   try {
     update('SIGNING');
     const instance = createClient({ chain: studionet, account, provider: provider as never });
-    const hash = String(await instance.writeContract({
-      address: targetAddress,
-      functionName,
-      args: args as never,
-      value: BigInt(0),
-    })) as unknown as TransactionHash;
+    let hash: TransactionHash;
+    try {
+      hash = String(await instance.writeContract({
+        address: targetAddress,
+        functionName,
+        args: args as never,
+        value: BigInt(0),
+      })) as unknown as TransactionHash;
+    } catch (error) {
+      update('FAILED', undefined, writeFailureDetail(error));
+      throw error;
+    }
     update('SUBMITTED', hash, 'Broadcast to Studionet');
 
     for (let attempt = 0; attempt < 180; attempt += 1) {
