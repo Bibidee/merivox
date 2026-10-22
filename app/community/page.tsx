@@ -5,8 +5,10 @@ import Link from 'next/link';
 import { ArrowLeft, ArrowRight, CheckCircle2, LockKeyhole, Megaphone, RefreshCw, UsersRound } from 'lucide-react';
 import { useApp } from '@/components/AppProviders';
 import { actionGateConfigured, ACTION_GATE_ADDRESS, contractConfigured } from '@/lib/config';
-import { readChain, readChainAt, sendChain, sendChainAt } from '@/lib/chain';
+import { extractContractReturn, readChain, readChainAt, sendChain, sendChainAt } from '@/lib/chain';
 import { asNumber, isWallet, shortAddress, type Announcement, type CommunitySpace, type Permission } from '@/lib/model';
+import { readAllPages } from '@/lib/rounds';
+import { verifyAnnouncementReadback } from '@/lib/verification';
 
 function normalizeSpace(value: Record<string, unknown>): CommunitySpace {
   return { space_id: String(value.space_id ?? ''), name: String(value.name ?? ''), founder: String(value.founder ?? ''), members: Array.isArray(value.members) ? value.members.map(String) : [], member_count: asNumber(value.member_count), created_at: asNumber(value.created_at) };
@@ -39,7 +41,7 @@ export default function CommunityPage() {
     if (!contractConfigured()) { setLoading(false); return; }
     setLoading(true); setError('');
     try {
-      const items = await readChain<Array<Record<string, unknown>>>('list_spaces', [BigInt(0), BigInt(25)]);
+      const items = await readAllPages((offset, limit) => readChain<Array<Record<string, unknown>>>('list_spaces', [BigInt(offset), BigInt(limit)]));
       const normalized = items.map(normalizeSpace);
       setSpaces(normalized);
       setSelected(current => current && normalized.some(item => item.space_id === current) ? current : normalized[0]?.space_id ?? '');
@@ -50,7 +52,7 @@ export default function CommunityPage() {
   const loadSelected = useCallback(async () => {
     if (!selected || !contractConfigured()) { setPermission(null); setAnnouncements([]); return; }
     try {
-      const nextAnnouncements = actionGateConfigured() ? await readChainAt<Array<Record<string, unknown>>>(ACTION_GATE_ADDRESS, 'list_announcements', [selected, BigInt(0), BigInt(25)]) : [];
+      const nextAnnouncements = actionGateConfigured() ? await readAllPages((offset, limit) => readChainAt<Array<Record<string, unknown>>>(ACTION_GATE_ADDRESS, 'list_announcements', [selected, BigInt(offset), BigInt(limit)])) : [];
       setAnnouncements(nextAnnouncements.map(normalizeAnnouncement));
       if (account && actionGateConfigured()) setPermission(normalizePermission(await readChainAt<Record<string, unknown>>(ACTION_GATE_ADDRESS, 'get_permission', [selected, account])));
       else setPermission(null);
@@ -84,11 +86,16 @@ export default function CommunityPage() {
     setBusy(true); setError(''); setSuccess('');
     try {
       const wallet = await requireWallet();
-      await sendChainAt(wallet.account, wallet.provider, 'publish_announcement', [selected, content.trim()], (phase, hash, detail) => updateTx('Publish community announcement', phase, hash, detail), async () => {
-        const items = await readChainAt<Array<Record<string, unknown>>>(ACTION_GATE_ADDRESS, 'list_announcements', [selected, BigInt(0), BigInt(25)]);
-        if (!items.some(item => String(item.content ?? '') === content.trim() && String(item.author ?? '').toLowerCase() === wallet.account.toLowerCase())) throw new Error('Announcement did not read back from the ActionGate append-only log.');
-        return 'Announcement finalized and verified in the ActionGate log';
-      }, ACTION_GATE_ADDRESS);
+      const expectedContent = content.trim();
+      const expectedAuthorizationVersion = permission.version;
+      await sendChainAt(wallet.account, wallet.provider, 'publish_announcement', [selected, expectedContent], (phase, hash, detail) => updateTx('Publish community announcement', phase, hash, detail), async receipt => verifyAnnouncementReadback({
+        returnedId: extractContractReturn(receipt),
+        expectedSpaceId: selected,
+        expectedAuthor: wallet.account,
+        expectedContent,
+        expectedAuthorizationVersion,
+        readAnnouncement: announcementId => readChainAt<Record<string, unknown>>(ACTION_GATE_ADDRESS, 'get_announcement', [announcementId]),
+      }), ACTION_GATE_ADDRESS);
       setContent(''); setSuccess('Announcement finalized and verified in the immutable publication log.'); await loadSelected();
     } catch (err) { setError(err instanceof Error ? err.message : 'Announcement could not be published.'); }
     finally { setBusy(false); }

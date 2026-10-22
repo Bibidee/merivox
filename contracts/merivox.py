@@ -85,6 +85,7 @@ class Alternative:
     timing: str
     choice_id: str
     judgment: str
+    validator_judgment: str
     created_at: u64
     attempts: u32
     last_attempt_at: u64
@@ -443,6 +444,7 @@ class Merivox(gl.Contract):
             )
             alt.choice_id = cid
             alt.judgment = 'UNRESOLVED'
+            alt.validator_judgment = 'UNRESOLVED'
             alt.last_error = 'ALIGNMENT_TIMEOUT'
             r.alignment_cursor += u32(1)
             r.last_judgment = 'UNRESOLVED'
@@ -656,6 +658,7 @@ class Merivox(gl.Contract):
             timing=context[2],
             choice_id='',
             judgment='UNREVIEWED',
+            validator_judgment='UNREVIEWED',
             created_at=u64(now),
             attempts=u32(0),
             last_attempt_at=u64(0),
@@ -727,6 +730,7 @@ class Merivox(gl.Contract):
             timing=context[2],
             choice_id='',
             judgment='UNREVIEWED',
+            validator_judgment='UNREVIEWED',
             created_at=u64(now),
             attempts=u32(0),
             last_attempt_at=u64(0),
@@ -787,6 +791,7 @@ class Merivox(gl.Contract):
             )
             alt.choice_id = cid
             alt.judgment = 'DISTINCT'
+            alt.validator_judgment = 'DISTINCT'
             alt.last_error = ''
             r.alignment_cursor += u32(1)
             r.last_alignment_at = u64(now)
@@ -831,17 +836,29 @@ class Merivox(gl.Contract):
             return 'RETRY_REQUIRED'
 
         classification = judgment['classification']
+        validator_classification = classification
         if classification == 'EQUIVALENT':
             cid = judgment['choice_id']
-            self.choices[cid].nomination_ids.append(aid)
-        else:
+            anchor = self.choices.get(cid)
+            anchor_alternative = self.alternatives.get(anchor.anchor_nomination_id) if anchor is not None else None
+            if r.binding and (anchor is None or anchor_alternative is None or not self._binding_envelopes_match(r, anchor_alternative, alt)):
+                # Validator consensus remains authoritative for semantic text,
+                # while the typed protected-action envelope is checked
+                # deterministically. Never merge an incompatible action.
+                classification = 'AMBIGUOUS'
+                alt.last_error = 'INCOMPATIBLE_ACTION_ENVELOPE'
+            else:
+                self.choices[cid].nomination_ids.append(aid)
+        if classification != 'EQUIVALENT':
             cid = self._create_choice(
                 r, round_id, aid, alt.title, alt.details, alt.audience,
                 alt.delivery, alt.timing, classification == 'AMBIGUOUS', now,
             )
         alt.choice_id = cid
         alt.judgment = classification
-        alt.last_error = ''
+        alt.validator_judgment = validator_classification
+        if classification == validator_classification:
+            alt.last_error = ''
         r.alignment_cursor += u32(1)
         r.last_alignment_at = u64(now)
         r.last_judgment = classification
@@ -931,51 +948,28 @@ class Merivox(gl.Contract):
         r.finalized_at = u64(now)
         return r.status
 
-    @gl.public.write
-    def finalize(self, round_id: str) -> str:
-        if isinstance(round_id, int):
-            round_id = str(round_id)
-        r = self._get_round(round_id)
-        now = self._timestamp()
-        if r.status in ('DECIDED', 'TIED', 'NO_QUORUM', 'CANCELLED'):
-            raise gl.vm.UserError('Round is already terminal')
-        if r.status == 'RECONCILING':
-            if now < int(r.ballot_close):
-                raise gl.vm.UserError('Voting deadline has not passed')
-            self._close_pending(r, round_id, now)
-        if r.status == 'BALLOT_READY':
-            if now < int(r.ballot_close):
-                raise gl.vm.UserError('Voting deadline has not passed')
-        elif r.status == 'VOTING' and now < int(r.ballot_close):
-            raise gl.vm.UserError('Voting deadline has not passed')
-        elif r.status not in ('BALLOT_READY', 'VOTING'):
-            raise gl.vm.UserError('Round cannot be finalized from its current state')
-        status = self._finish(r, now)
-        if r.binding:
-            r.action_status = 'APPROVED' if status == 'DECIDED' else 'NOT_AUTHORIZED'
-        return status
+    def _binding_envelopes_match(self, r: DecisionRound, anchor: Alternative, candidate: Alternative) -> bool:
+        """Require exact typed agreement before a binding nomination is merged.
 
-    def _authorization_dict(self, authorization: BindingAuthorization) -> dict:
-        return {
-            'round_id': authorization.round_id,
-            'space_id': authorization.space_id,
-            'action_type': authorization.action_type,
-            'recipient_wallet': authorization.recipient_wallet,
-            'permission_scope': authorization.permission_scope,
-            'expires_at': int(authorization.expires_at),
-            'action_digest': authorization.action_digest,
-            'version': int(authorization.version),
-            'finalized_at': int(authorization.finalized_at),
-            'lifecycle': authorization.lifecycle,
-            'dispatched_at': int(authorization.dispatched_at),
-            'applied_at': int(authorization.applied_at),
-            'last_error': authorization.last_error,
-        }
+        Validator consensus remains responsible for semantic equivalence of
+        human-readable proposals. This deterministic check prevents a
+        validator result from merging different protected actions.
+        """
+        return (
+            bool(r.binding)
+            and bool(anchor.binding)
+            and bool(candidate.binding)
+            and anchor.space_id == r.space_id
+            and candidate.space_id == r.space_id
+            and anchor.action_type == candidate.action_type
+            and anchor.recipient_wallet == candidate.recipient_wallet
+            and anchor.permission_scope == candidate.permission_scope
+            and int(anchor.expires_at) == int(candidate.expires_at)
+            and anchor.action_digest == candidate.action_digest
+        )
 
-    def _binding_authorization_inputs(self, r: DecisionRound, round_id: str, now: int) -> tuple[Alternative, str, int]:
-        if not r.binding:
-            raise gl.vm.UserError('This is not a binding governance round')
-        if r.status != 'DECIDED' or r.action_status != 'APPROVED' or not r.winner_choice_id:
+    def _binding_authorization_candidate(self, r: DecisionRound, round_id: str, now: int) -> tuple[Alternative, str, int]:
+        if not r.binding or r.status != 'DECIDED' or not r.winner_choice_id:
             raise gl.vm.UserError('Binding round is not uniquely approved')
         required_quorum = (int(r.member_count) * 2 + 2) // 3
         if int(r.quorum) < required_quorum or int(r.voter_count) < required_quorum:
@@ -1001,6 +995,65 @@ class Merivox(gl.Contract):
             raise gl.vm.UserError('Binding grant has expired before dispatch')
         version = self._authorization_order(round_id, int(r.finalized_at))
         return alternative, digest, version
+
+    def _binding_action_is_eligible(self, r: DecisionRound, round_id: str, now: int) -> bool:
+        try:
+            self._binding_authorization_candidate(r, round_id, now)
+            return True
+        except Exception:
+            return False
+
+    @gl.public.write
+    def finalize(self, round_id: str) -> str:
+        if isinstance(round_id, int):
+            round_id = str(round_id)
+        r = self._get_round(round_id)
+        now = self._timestamp()
+        if r.status in ('DECIDED', 'TIED', 'NO_QUORUM', 'CANCELLED'):
+            raise gl.vm.UserError('Round is already terminal')
+        if r.status == 'RECONCILING':
+            if now < int(r.ballot_close):
+                raise gl.vm.UserError('Voting deadline has not passed')
+            self._close_pending(r, round_id, now)
+        if r.status == 'BALLOT_READY':
+            if now < int(r.ballot_close):
+                raise gl.vm.UserError('Voting deadline has not passed')
+        elif r.status == 'VOTING' and now < int(r.ballot_close):
+            raise gl.vm.UserError('Voting deadline has not passed')
+        elif r.status not in ('BALLOT_READY', 'VOTING'):
+            raise gl.vm.UserError('Round cannot be finalized from its current state')
+        status = self._finish(r, now)
+        if r.binding:
+            r.action_status = (
+                'APPROVED'
+                if status == 'DECIDED' and self._binding_action_is_eligible(r, round_id, now)
+                else 'NOT_AUTHORIZED'
+            )
+        return status
+
+    def _authorization_dict(self, authorization: BindingAuthorization) -> dict:
+        return {
+            'round_id': authorization.round_id,
+            'space_id': authorization.space_id,
+            'action_type': authorization.action_type,
+            'recipient_wallet': authorization.recipient_wallet,
+            'permission_scope': authorization.permission_scope,
+            'expires_at': int(authorization.expires_at),
+            'action_digest': authorization.action_digest,
+            'version': int(authorization.version),
+            'finalized_at': int(authorization.finalized_at),
+            'lifecycle': authorization.lifecycle,
+            'dispatched_at': int(authorization.dispatched_at),
+            'applied_at': int(authorization.applied_at),
+            'last_error': authorization.last_error,
+        }
+
+    def _binding_authorization_inputs(self, r: DecisionRound, round_id: str, now: int) -> tuple[Alternative, str, int]:
+        if not r.binding:
+            raise gl.vm.UserError('This is not a binding governance round')
+        if r.status != 'DECIDED' or r.action_status != 'APPROVED' or not r.winner_choice_id:
+            raise gl.vm.UserError('Binding round is not uniquely approved')
+        return self._binding_authorization_candidate(r, round_id, now)
 
     @gl.public.write
     def dispatch_binding(self, round_id: str) -> str:
@@ -1132,6 +1185,7 @@ class Merivox(gl.Contract):
             'timing': a.timing,
             'choice_id': a.choice_id,
             'judgment': a.judgment,
+            'validator_judgment': a.validator_judgment,
             'created_at': int(a.created_at),
             'attempts': int(a.attempts),
             'last_attempt_at': int(a.last_attempt_at),

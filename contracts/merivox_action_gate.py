@@ -55,6 +55,8 @@ class MerivoxActionGate(gl.Contract):
     permissions: TreeMap[str, PublisherPermission]
     announcements: TreeMap[str, Announcement]
     announcement_ids: DynArray[str]
+    announcement_ids_by_space: TreeMap[str, str]
+    announcement_counts_by_space: TreeMap[str, u256]
     deliveries: TreeMap[str, bool]
     next_announcement_id: u256
 
@@ -88,6 +90,9 @@ class MerivoxActionGate(gl.Contract):
 
     def _delivery_key(self, space_id: str, recipient_wallet: str, version: u256, action_digest: str) -> str:
         return self._permission_key(space_id, recipient_wallet) + '|' + str(int(version)) + '|' + action_digest
+
+    def _announcement_index_key(self, space_id: str, index: int) -> str:
+        return space_id + '|' + str(index)
 
     def _permission_dict(self, permission: PublisherPermission | None, now: int) -> dict:
         if permission is None:
@@ -235,6 +240,10 @@ class MerivoxActionGate(gl.Contract):
             authorization_version=u256(permission.version),
         )
         self.announcement_ids.append(announcement_id)
+        space_count = self.announcement_counts_by_space.get(space_id)
+        next_index = int(space_count) if space_count is not None else 0
+        self.announcement_ids_by_space[self._announcement_index_key(space_id, next_index)] = announcement_id
+        self.announcement_counts_by_space[space_id] = u256(next_index + 1)
         return announcement_id
 
     @gl.public.view
@@ -273,13 +282,22 @@ class MerivoxActionGate(gl.Contract):
 
     @gl.public.view
     def list_announcements(self, space_id: str, offset: u32, limit: u32) -> list:
+        """Return a bounded page using an offset local to ``space_id``.
+
+        Announcement identifiers are indexed per community at publication
+        time, so unrelated communities cannot consume the caller's page.
+        ``offset`` is the zero-based per-community item offset and ``limit``
+        is capped at ``MAX_PAGE``.
+        """
         if int(limit) < 1 or int(limit) > MAX_PAGE:
             raise gl.vm.UserError('Invalid page size')
         results = []
         start = int(offset)
-        for i in range(start, min(start + int(limit), len(self.announcement_ids))):
-            announcement = self.announcements[self.announcement_ids[i]]
-            if announcement.space_id != space_id:
-                continue
-            results.append(self.get_announcement(announcement.id))
+        total = self.announcement_counts_by_space.get(space_id)
+        total_count = int(total) if total is not None else 0
+        for i in range(start, min(start + int(limit), total_count)):
+            announcement_id = self.announcement_ids_by_space.get(self._announcement_index_key(space_id, i))
+            if announcement_id is None:
+                raise gl.vm.UserError('Announcement index is inconsistent')
+            results.append(self.get_announcement(announcement_id))
         return results

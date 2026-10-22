@@ -6,6 +6,7 @@ Studionet evidence; live evidence is recorded separately after deployment.
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 import pytest
 import sys
 
@@ -99,6 +100,35 @@ def deploy_bound_pair(engine: SimEngine) -> tuple[str, str]:
     return merivox, gate
 
 
+def timestamp(value: str) -> int:
+    return int(datetime.fromisoformat(value.replace('Z', '+00:00')).replace(tzinfo=timezone.utc).timestamp())
+
+
+def dispatch_grant(engine, merivox, space_id: str, start: str, recipient: str) -> None:
+    start_ts = timestamp(start)
+    round_id = engine.call_method(
+        merivox, 'create_binding_round',
+        [space_id, QUESTION, start_ts + 1200, start_ts + 7200], sender=OWNER,
+    )
+    engine.call_method(
+        merivox, 'nominate_binding',
+        [round_id, 'Publish the weekly notice', DETAILS, 'Members', 'Official feed', 'Saturday', 'GRANT_PUBLISHER', recipient, 'PUBLISHER', start_ts + 20000],
+        sender=OWNER,
+    )
+    engine.vm.warp(start)
+    engine.vm.warp(datetime.fromtimestamp(start_ts + 1200, tz=timezone.utc).isoformat().replace('+00:00', 'Z'))
+    engine.call_method(merivox, 'begin_alignment', [round_id], sender=BOB)
+    engine.call_method(merivox, 'reconcile_next', [round_id], sender=BOB)
+    engine.call_method(merivox, 'open_ballot', [round_id], sender=OWNER)
+    choice_id = engine.call_method(merivox, 'get_canonical_ballot', [round_id])[0]['id']
+    engine.call_method(merivox, 'vote', [round_id, choice_id], sender=OWNER)
+    engine.call_method(merivox, 'vote', [round_id, choice_id], sender=ALICE)
+    engine.vm.warp(datetime.fromtimestamp(start_ts + 7200, tz=timezone.utc).isoformat().replace('+00:00', 'Z'))
+    assert engine.call_method(merivox, 'finalize', [round_id], sender=BOB) == 'DECIDED'
+    assert engine.call_method(merivox, 'dispatch_binding', [round_id], sender=BOB) == 'DISPATCHED'
+    assert engine.call_method(merivox, 'refresh_binding_action', [round_id], sender=BOB) == 'APPLIED'
+
+
 def test_binding_grant_revoke_publication_and_replay_protection(sim_engine):
     engine = sim_engine
     merivox, gate = deploy_bound_pair(engine)
@@ -168,3 +198,30 @@ def test_binding_grant_revoke_publication_and_replay_protection(sim_engine):
         sender=merivox,
     )
     assert old_replay == 'SUPERSEDED'
+
+
+def test_action_gate_pagination_is_per_space_and_preserves_interleaved_ids(sim_engine):
+    engine = sim_engine
+    merivox, gate = deploy_bound_pair(engine)
+    roster = [OWNER, ALICE, BOB]
+    engine.call_method(merivox, 'create_space', ['builders', 'Builder community', roster], sender=OWNER)
+    engine.call_method(merivox, 'create_space', ['designers', 'Design community', roster], sender=OWNER)
+    dispatch_grant(engine, merivox, 'builders', '2027-01-15T00:00:00Z', ALICE)
+    dispatch_grant(engine, merivox, 'designers', '2027-01-15T03:00:00Z', ALICE)
+
+    for index in range(60):
+        space_id = 'builders' if index % 2 == 0 else 'designers'
+        engine.call_method(gate, 'publish_announcement', [space_id, f'Announcement {index:02d}'], sender=ALICE)
+
+    builders_first = engine.call_method(gate, 'list_announcements', ['builders', 0, 25])
+    builders_second = engine.call_method(gate, 'list_announcements', ['builders', 25, 25])
+    designers_first = engine.call_method(gate, 'list_announcements', ['designers', 0, 25])
+    designers_second = engine.call_method(gate, 'list_announcements', ['designers', 25, 25])
+    assert len(builders_first) == 25
+    assert len(builders_second) == 5
+    assert len(designers_first) == 25
+    assert len(designers_second) == 5
+    assert all(item['space_id'] == 'builders' for item in builders_first)
+    assert all(item['space_id'] == 'designers' for item in designers_first)
+    assert [item['id'] for item in builders_first + builders_second] == [str(index) for index in range(1, 61, 2)]
+    assert [item['id'] for item in designers_first + designers_second] == [str(index) for index in range(2, 61, 2)]
