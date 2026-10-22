@@ -18,8 +18,7 @@
 | Live Studionet revoke | Revoke, child application and revoked publication rejection | `docs/LIVE_EVIDENCE.md`, round 2 | Passing |
 | Dependency audit | Exact remediation lockfile, production/runtime scope separated from dev tooling | `npm audit --json`; `npm audit --omit=dev --json` | Production 0; dev-only 11 disclosed in `docs/SECURITY.md` |
 | CI | Frontend and contract jobs on the historical default branch | [Historical CI #21](https://github.com/Bibidee/merivox/actions/runs/39670892329), commit `22a7c2a4c268955185d4cee57c767ca90c963091` | Passing |
-| Final-readiness CI | Frontend and contract jobs on PR #2 release head | [CI #31](https://github.com/Bibidee/merivox/actions/runs/39770891412), commit `5f76ca98603e3c5e51faf55384030dd5ac3d9cb3` | Passing |
-| Audit follow-up CI | Frontend and contract jobs on the documentation/audit follow-up head | [CI #33](https://github.com/Bibidee/merivox/actions/runs/39773150241), commit `7d7f8161dd01bb89bf246d861b56b3c46a00b935` | Passing |
+| Final-readiness CI | Frontend and contract jobs on PR #2 final release head | [CI #37](https://github.com/Bibidee/merivox/actions/runs/39774221576), commit `dfd9640ff2501e05571d1d7fd58f4120543d83c0` | Passing |
 | Final-readiness branch | Local build/test and live release evidence | `remediation/post-submission-security-remediation`, final commit recorded in `HANDOFF_STATUS.md` | Passing; live final pair and both lifecycle paths verified |
 
 Mocked or compatible-runtime results are never represented as live GenLayer evidence. Every live claim includes a transaction hash, finality, canonical readback and source/deployment context. Browser observations are release evidence, while transient RPC recovery and unexercised wallet rejection remain disclosed limitations.

@@ -21,10 +21,10 @@ Current verdict: `READY WITH DISCLOSED LIMITATIONS`. Merivox is prepared for sub
 - Merivox source SHA-256: `98C1A343C29C600F1BC44B8B0B48BCBCD10648EDB6DFE4F6782CAA715AADC4CE`
 - ActionGate source SHA-256: `E9B7E904624C4860F1BCCD0F72FC2D96794B617E33E91F73204576AEF2ADA305`
 - Vercel: [merivox.vercel.app](https://merivox.vercel.app)
+- Current Vercel deployment: [AV5U9Xx7Q2Tw1xwZetJzMyikZvHe](https://vercel.com/bibidees-projects/merivox/AV5U9Xx7Q2Tw1xwZetJzMyikZvHe) — `READY`
 - PR: [#2](https://github.com/Bibidee/merivox/pull/2) — open for reassessment; do not merge silently.
-- Final release commit: `5f76ca98603e3c5e51faf55384030dd5ac3d9cb3`
-- Passing release CI: [#31](https://github.com/Bibidee/merivox/actions/runs/39770891412)
-- Passing documentation/audit follow-up CI: [#33](https://github.com/Bibidee/merivox/actions/runs/39773150241)
+- Final release commit: `dfd9640ff2501e05571d1d7fd58f4120543d83c0`
+- Passing release CI: [#37](https://github.com/Bibidee/merivox/actions/runs/39774221576)
 
 ## Final evidence
 
@@ -34,6 +34,6 @@ Current verdict: `READY WITH DISCLOSED LIMITATIONS`. Merivox is prepared for sub
 - Post-revoke rejection: `0x83b521cd6c6476fc054139458d8a1d018ecfc16b6ab980f089240e7ab71a6e56`
 - Stale grant supersession: `0x8ffd7e89fb7019ffcc045cb15807eaf86f707cfd86f1d72f5415e5c7fe681ec2`
 
-Final evidence ledger commit: `9c1f65ba8f00d1ac642ea0edadeb99bb52ce6908`. The final release head `5f76ca98603e3c5e51faf55384030dd5ac3d9cb3` passed [CI #31](https://github.com/Bibidee/merivox/actions/runs/39770891412). Computer Use verified the production routes at 375px, 390px, 768px and 1440px with no horizontal overflow; a transient RPC read error recovered on isolated retry. Rejected-signature UI remains a controlled-review limitation rather than a claimed live wallet test; no private key is accessed by the agent.
+Final evidence ledger commit: `9c1f65ba8f00d1ac642ea0edadeb99bb52ce6908`. The final release head `dfd9640ff2501e05571d1d7fd58f4120543d83c0` passed [CI #37](https://github.com/Bibidee/merivox/actions/runs/39774221576). Computer Use verified the production routes at 375px, 390px, 768px and 1440px with no horizontal overflow; a transient RPC read error recovered on isolated retry. The wallet-rejection path now records `FAILED` locally when signing is rejected, with a focused regression test; no live wallet rejection was requested or claimed.
 
 No private key is accessed by the agent. Wallet signing is not required for the existing unlocked CLI accounts used in this verification.

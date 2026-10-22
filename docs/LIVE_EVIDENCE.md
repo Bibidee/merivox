@@ -10,7 +10,7 @@ This ledger records the corrected Merivox V1 deployment and the live Studionet l
 - Frontend: [merivox.vercel.app](https://merivox.vercel.app)
 - Release branch: `remediation/post-submission-security-remediation`
 - Implementation commit before evidence-document updates: `541b8b797226da1e5d6bca85a0435a7d156ef8bd`
-- Final pre-submission release commit: `5f76ca98603e3c5e51faf55384030dd5ac3d9cb3`
+- Final pre-submission release commit: `dfd9640ff2501e05571d1d7fd58f4120543d83c0`
 - Merivox source SHA-256: `98C1A343C29C600F1BC44B8B0B48BCBCD10648EDB6DFE4F6782CAA715AADC4CE`
 - ActionGate source SHA-256: `E9B7E904624C4860F1BCCD0F72FC2D96794B617E33E91F73204576AEF2ADA305`
 - No private key was read, exported or revealed. All writes used the existing unlocked CLI accounts.
@@ -58,4 +58,4 @@ Round `2` uses two differently worded nominations with the same typed envelope: 
 
 - Compatible-runtime tests cover `AMBIGUOUS`, `NOT_AUTHORIZED`, duplicate delivery, stale replay (`SUPERSEDED`) and per-community interleaved pagination; those cases are not mislabeled as live GenLayer receipts.
 - Production browser verification covered `/`, `/new/`, `/community/`, `/round/?id=2`, `/align/?id=2`, `/ballot/?id=2`, `/outcome/?id=2` and `/activity/` at 375px, 390px, 768px and 1440px. No horizontal overflow was observed; the round-2 workspace visibly reports `DECIDED`, three eligible wallets, two alternatives, one canonical choice, three votes and quorum two. The outcome visibly reports `FINALIZED ON STUDIONET`, `UNIQUE HIGHEST TALLY`, `APPLIED`, the two validator classifications and the exact revoke envelope. The community view visibly reports both governed rounds and the append-only announcement; no active publisher permission remains after revoke. A transient RPC fetch failure during rapid route traversal recovered on an isolated retry and was retained as a disclosed browser/RPC limitation.
-- The production deployment is [merivox.vercel.app](https://merivox.vercel.app), currently served by deployment `HCtfWoNnbgCozPZWobcZbZ6cFkV3`, status `READY`.
+- The production deployment is [merivox.vercel.app](https://merivox.vercel.app), currently served by deployment `dpl_AV5U9Xx7Q2Tw1xwZetJzMyikZvHe`, status `READY`; its inspect URL is [AV5U9Xx7Q2Tw1xwZetJzMyikZvHe](https://vercel.com/bibidees-projects/merivox/AV5U9Xx7Q2Tw1xwZetJzMyikZvHe).
