@@ -31,6 +31,6 @@ Current verdict: `READY WITH DISCLOSED UI LIMITATIONS`. The corrected implementa
 - Post-revoke rejection: `0x83b521cd6c6476fc054139458d8a1d018ecfc16b6ab980f089240e7ab71a6e56`
 - Stale grant supersession: `0x8ffd7e89fb7019ffcc045cb15807eaf86f707cfd86f1d72f5415e5c7fe681ec2`
 
-The final commit, CI run and PR update are recorded after the documentation commit is pushed. Mobile viewport and rejected-signature UI flows remain disclosed limitations; no private key is accessed by the agent.
+Final evidence commit: `9c1f65ba8f00d1ac642ea0edadeb99bb52ce6908`. CI [#29](https://github.com/Bibidee/merivox/actions/runs/39770706659) passed on that release commit. Mobile viewport and rejected-signature UI flows remain disclosed limitations; no private key is accessed by the agent.
 
 No private key is accessed by the agent. Wallet signing is not required for the existing unlocked CLI accounts used in this verification.

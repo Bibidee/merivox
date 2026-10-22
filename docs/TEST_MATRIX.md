@@ -17,7 +17,7 @@
 | Live Studionet revoke | Revoke, child application and revoked publication rejection | `docs/LIVE_EVIDENCE.md`, round 2 | Passing |
 | Dependency audit | Exact remediation lockfile, production/runtime scope separated from dev tooling | `npm audit --json`; `npm audit --omit=dev --json` | Production 0; dev-only 11 disclosed in `docs/SECURITY.md` |
 | CI | Frontend and contract jobs on the historical default branch | [Historical CI #21](https://github.com/Bibidee/merivox/actions/runs/39670892329), commit `22a7c2a4c268955185d4cee57c767ca90c963091` | Passing |
-| Final-readiness CI | Frontend and contract jobs on PR #2 current head | Run link and commit are recorded in this matrix after push | Pending post-documentation push |
+| Final-readiness CI | Frontend and contract jobs on PR #2 current head | [CI #29](https://github.com/Bibidee/merivox/actions/runs/39770706659), commit `9c1f65ba8f00d1ac642ea0edadeb99bb52ce6908` | Passing |
 | Final-readiness branch | Local build/test and live release evidence | `remediation/post-submission-security-remediation`, final commit recorded in `HANDOFF_STATUS.md` | Passing; live final pair and both lifecycle paths verified |
 
 Mocked or compatible-runtime results are never represented as live GenLayer evidence. Every live claim includes a transaction hash, finality, canonical readback and source/deployment context.
