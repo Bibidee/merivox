@@ -24,6 +24,7 @@ Current verdict: `READY WITH DISCLOSED LIMITATIONS`. Merivox is prepared for sub
 - PR: [#2](https://github.com/Bibidee/merivox/pull/2) — open for reassessment; do not merge silently.
 - Final release commit: `5f76ca98603e3c5e51faf55384030dd5ac3d9cb3`
 - Passing release CI: [#31](https://github.com/Bibidee/merivox/actions/runs/39770891412)
+- Passing documentation/audit follow-up CI: [#33](https://github.com/Bibidee/merivox/actions/runs/39773150241)
 
 ## Final evidence
 

@@ -32,7 +32,7 @@
   },
   "verification": {
     "liveEvidence": "docs/LIVE_EVIDENCE.md",
-    "ciRun": "https://github.com/Bibidee/merivox/actions/runs/39770891412",
+    "ciRun": "https://github.com/Bibidee/merivox/actions/runs/39773150241",
     "grantRound": "1",
     "grantFinalizationTx": "0x59969c28528f763d50cff978356f0abd653126629bc76bf5f177de35cd87565e",
     "grantDispatchParent": "0xdd3bd8535d7296332d1ff19eef18d36944f72f55b51ce6c245d64a46c987fdc1",
