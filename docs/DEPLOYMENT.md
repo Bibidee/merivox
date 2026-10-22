@@ -46,7 +46,7 @@ The live grant and revoke rounds each reached `DECIDED` with three votes and a t
 
 ## CI and tooling disclosure
 
-Local frontend checks, Direct Mode contract tests and the cross-contract suite pass. [Historical CI #21](https://github.com/Bibidee/merivox/actions/runs/39670892329) passed on default-branch commit `22a7c2a4c268955185d4cee57c767ca90c963091`; final-readiness CI is recorded on PR #2 and must be rerun after this branch update. The pinned repository toolchain contains no separate `genvm-lint` executable, so verification uses Direct Mode execution, AST/static checks, contract schema inspection and live finalized receipt/readback verification instead.
+Local frontend checks, Direct Mode contract tests and the cross-contract suite pass. [Historical CI #21](https://github.com/Bibidee/merivox/actions/runs/39670892329) passed on default-branch commit `22a7c2a4c268955185d4cee57c767ca90c963091`; final-readiness [CI #25](https://github.com/Bibidee/merivox/actions/runs/39748228616) passed on commit `5eef3f08cff9b64f6a693a433f8f898d5fcf5384`. The pinned repository toolchain contains no separate `genvm-lint` executable, so verification uses Direct Mode execution, AST/static checks, contract schema inspection and live finalized receipt/readback verification instead.
 
 ## Remediation deployment decision
 
