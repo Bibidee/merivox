@@ -1,8 +1,8 @@
 # Merivox V1 — deployment and verification ledger
 
-This is the factual release ledger for the corrected two-contract implementation. Earlier one-contract and superseded-pair evidence remains historical and is not used as current proof.
+This ledger separates the already-submitted production release from the proposed post-submission remediation. Earlier one-contract and superseded-pair evidence remains historical and is not used as current proof. No remediation contract or frontend was deployed during this audit.
 
-## Current release
+## Submitted release
 
 - Network: GenLayer Studionet, chain `61999`
 - RPC: `https://studio.genlayer.com/api`
@@ -17,9 +17,20 @@ This is the factual release ledger for the corrected two-contract implementation
 
 Deployment transactions, complete grant/revoke lifecycle hashes, parent-child receipts and canonical readbacks are recorded in [`LIVE_EVIDENCE.md`](LIVE_EVIDENCE.md).
 
-## Verification result
+## Proposed post-submission remediation
 
-The corrected live release now demonstrates:
+- Branch: `remediation/post-submission-security-remediation`
+- Governance/pagination/publication code commit: `7a6e1b2b06fc8183cd44cd2ae7b6ef0aeb849f32`
+- Dependency patch commit: `e57dbeaa37e7d5a25e44d91cb604cde30c3379c5`
+- Status: local tests and production build pass; not deployed, not merged, no production configuration changed
+- Proposed Merivox SHA-256: `8AA20FFB54103B2F467CC6C0CC71C80BE1DAA52243881F9020FA690BFD5402D1`
+- Proposed ActionGate SHA-256: `E9B7E904624C4860F1BCCD0F72FC2D96794B617E33E91F73204576AEF2ADA305`
+
+A new compatible Merivox/ActionGate pair is required to correct the on-chain `action_status` semantics and add the per-space announcement index. Existing production state is not rewritten.
+
+## Submitted release verification result
+
+The submitted live release demonstrates:
 
 - immutable community and frozen roster;
 - two validator-backed binding rounds with `DISTINCT` and `EQUIVALENT` classifications;
@@ -29,12 +40,18 @@ The corrected live release now demonstrates:
 - ActionGate `effective=false`, `reason=REVOKED`, and finalized rejection of the formerly authorized publisher;
 - production browser readback of the Merivox Decision Studio, Choice Map, community workspace and governed action outcome.
 
+The submitted contract pair remains safe against unauthorized ActionGate dispatch because `dispatch_binding()` already rechecks quorum, majority, certainty, envelope integrity and grant expiry. However, the deployed source can expose `APPROVED` for a unique binding tally that does not satisfy those dispatch conditions, and its deployed frontend still has the older limited-page publication verification. Those are disclosed release limitations; the remediation branch corrects them but is not live.
+
 The live grant and revoke rounds each reached `DECIDED` with three votes and a three-wallet quorum. The compatible-runtime suite additionally covers duplicate delivery, recovery and stale authorization replay; those paths are not mislabeled as live receipts.
 
 ## CI and tooling disclosure
 
-Local frontend checks, Direct Mode contract tests and the cross-contract suite pass. [Merivox CI #20](https://github.com/Bibidee/merivox/actions/runs/39670667483) passed on default-branch commit `42731ec1e20ee13874a9fd63c256c1d4fcfd2aac`. The pinned repository toolchain contains no separate `genvm-lint` executable, so the release uses Direct Mode execution, AST/static checks, contract schema inspection and live finalized receipt/readback verification instead.
+Local frontend checks, Direct Mode contract tests and the cross-contract suite pass. [Merivox CI #21](https://github.com/Bibidee/merivox/actions/runs/39670892329) passed on submitted default-branch commit `22a7c2a4c268955185d4cee57c767ca90c963091`. The remediation branch adds focused regression coverage and is intended to run the same jobs in its unmerged PR. The pinned repository toolchain contains no separate `genvm-lint` executable, so verification uses Direct Mode execution, AST/static checks, contract schema inspection and live finalized receipt/readback verification instead.
+
+## Remediation deployment decision
+
+The remediation should not be deployed as an in-place mutation: Intelligent Contracts are immutable and the existing pair contains historical communities, decisions and publisher versions. If approved, deploy a new mutually bound pair, verify reciprocal bootstrap binding, recreate or explicitly migrate only the desired community state under a documented policy, and update Vercel addresses only after source-parity and lifecycle verification. No deployment or wallet transaction was initiated for this audit.
 
 ## Historical releases
 
-The original one-contract deployment and the earlier incorrect ActionGate pair are superseded. Their addresses and transactions remain in Git history only; no migration or source parity is claimed for them. The corrected pair above is the only current release target.
+The original one-contract deployment and the earlier incorrect ActionGate pair are superseded. Their addresses and transactions remain in Git history only; no migration or source parity is claimed for them. The corrected pair above is the only current live release target; the remediation pair is proposed only.

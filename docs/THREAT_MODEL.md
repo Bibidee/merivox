@@ -1,5 +1,7 @@
 # Merivox governed-actions threat model
 
+This is the post-submission audit of the governed-action path. The submitted pair remains the only live evidence source; the remediation branch is a proposed replacement and has not been deployed.
+
 ## Scope
 
 This review covers the browser, the Merivox Intelligent Contract, the MerivoxActionGate Intelligent Contract, and the finalized-only message path between them on Studionet `61999`. It does not treat wallet ownership as proof of human identity or organizational ownership.
@@ -22,7 +24,11 @@ This review covers the browser, the Merivox Intelligent Contract, the MerivoxAct
 | Ambiguous or injected nomination becomes authority | Prompt treats proposal text as data; unresolved/ambiguous results cannot authorize binding execution | Static/direct consensus tests and live evidence when available |
 | Parent finality is mistaken for child application | Merivox lifecycle distinguishes `DISPATCHED`, `APPLIED` and recovery; frontend rereads both contracts | Frontend verifier and lifecycle tests |
 | Expired publisher publishes | Gate checks expiry, active grant, current Merivox version and digest at publication | ActionGate direct tests |
+| Unique tally is mistaken for executable approval | Finalization now applies two-thirds turnout, strict full-roster affirmative majority, certain winner, resolved nominations and valid envelope checks before `APPROVED` | `tests/test_security_remediation.py` |
+| Validator-equivalent nominations merge different protected actions | Deterministic typed-envelope equality is required; conflicts become `AMBIGUOUS` and retain `validator_judgment=EQUIVALENT` | Five envelope-conflict regression cases |
+| Unrelated announcements consume a filtered page | Per-space announcement index makes offset local to the community and bounded to 25 records | Interleaved 60-announcement cross-contract test |
+| Duplicate publication text is mistaken for a new write | Frontend extracts the finalized return ID and reads exactly that record | Frontend verification tests |
 
 ## Residual risks
 
-Wallets are pseudonymous, RPC availability can delay readback, and validator semantic judgment can remain unavailable. Those conditions must remain visible as uncertainty or pending state; they are not grounds to fabricate success.
+Wallets are pseudonymous, RPC availability can delay readback, and validator semantic judgment can remain unavailable. Those conditions must remain visible as uncertainty or pending state; they are not grounds to fabricate success. The submitted deployment still exposes the historical false-`APPROVED` label and limited publication verification until a replacement pair and approved frontend deployment exist.

@@ -6,12 +6,24 @@
     "rpc": "https://studio.genlayer.com/api",
     "cli": "genlayer@0.39.1"
   },
-  "source": {
+  "submittedRelease": {
+    "defaultBranch": "main",
+    "commit": "22a7c2a4c268955185d4cee57c767ca90c963091",
     "implementationCommit": "38a2a8d84d7df26edafa5143ed4cf48268f0f1e3",
     "merivoxSha256": "E4FEAA9896140A283A3B7A2A349BCB4D675A4F0C1540A6B129B832EC67EA7645",
-    "actionGateSha256": "A047D22FBD568B29ABBB949417FDBCFBD86DBC645D6D37EB9B16E2F0CD26A652"
+    "actionGateSha256": "A047D22FBD568B29ABBB949417FDBCFBD86DBC645D6D37EB9B16E2F0CD26A652",
+    "status": "submitted-and-deployed"
   },
-  "contracts": {
+  "remediation": {
+    "branch": "remediation/post-submission-security-remediation",
+    "codeCommit": "7a6e1b2b06fc8183cd44cd2ae7b6ef0aeb849f32",
+    "dependencyCommit": "e57dbeaa37e7d5a25e44d91cb604cde30c3379c5",
+    "merivoxSha256": "8AA20FFB54103B2F467CC6C0CC71C80BE1DAA52243881F9020FA690BFD5402D1",
+    "actionGateSha256": "E9B7E904624C4860F1BCCD0F72FC2D96794B617E33E91F73204576AEF2ADA305",
+    "status": "local-tested-not-deployed",
+    "requiresExplicitApproval": true
+  },
+  "deployedContracts": {
     "merivox": "0xe201A351b898D15eF8ACDfFF22f62aFabC834C3C",
     "merivoxActionGate": "0x263c5bAE66CcFcc04bA3546C3fa191F573C5D46b"
   },
@@ -21,7 +33,7 @@
     "status": "READY"
   },
   "verification": {
-    "ciRun": "https://github.com/Bibidee/merivox/actions/runs/39670667483",
+    "submittedCiRun": "https://github.com/Bibidee/merivox/actions/runs/39670892329",
     "liveEvidence": "docs/LIVE_EVIDENCE.md",
     "grantRound": "1",
     "revokeRound": "2",

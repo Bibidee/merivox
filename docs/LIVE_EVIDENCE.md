@@ -1,6 +1,6 @@
 # Merivox live evidence ledger
 
-This ledger records only the corrected two-contract release and its canonical Studionet readbacks. Historical one-contract deployments are superseded and are not used as proof for this release.
+This ledger records only the already-submitted two-contract release and its canonical Studionet readbacks. Historical one-contract deployments are superseded and are not used as proof for this release. The post-submission remediation branch is not represented as live evidence.
 
 ## Target
 
@@ -11,6 +11,10 @@ This ledger records only the corrected two-contract release and its canonical St
 - Implementation commit: `38a2a8d84d7df26edafa5143ed4cf48268f0f1e3`
 - Merivox source SHA-256: `E4FEAA9896140A283A3B7A2A349BCB4D675A4F0C1540A6B129B832EC67EA7645`
 - ActionGate source SHA-256: `A047D22FBD568B29ABBB949417FDBCFBD86DBC645D6D37EB9B16E2F0CD26A652`
+
+## Submission boundary
+
+The live addresses and receipts below are historical facts for the submitted release. The remediation branch (`remediation/post-submission-security-remediation`) is local-only and has no live contract addresses, deployment receipts or Vercel deployment. Its local correctness evidence is recorded in `docs/TEST_MATRIX.md`; it must not be inferred from these live receipts.
 
 ## Deployments and binding
 
@@ -51,8 +55,10 @@ The same frozen community produced a second binding round with the exact typed e
 
 ## Additional verification
 
-- The compatible-runtime cross-contract suite covers revoke, duplicate delivery and stale replay (`SUPERSEDED`); these are not represented as live GenLayer receipts.
+- The compatible-runtime cross-contract suite covers revoke, duplicate delivery, stale replay (`SUPERSEDED`) and per-community interleaved pagination; these are not represented as live GenLayer receipts.
 - A live unpermissioned `get_permission` read returned `exists=false`, `effective=false`, `reason=NO_PERMISSION` on the corrected pair, validating the Address normalization regression fix.
 - Production browser verification confirmed `/community/`, `/round/?id=1` and `/outcome/?id=1` render the corrected community, validator classifications and `APPLIED` governed action after a fresh read.
 - Vercel production deployment: `dpl_HguQZeewPHpU7EarDNQLaSS6NjnQ`, `READY`, aliased to [merivox.vercel.app](https://merivox.vercel.app).
 - No private key was read, exported or revealed. Account switching used only the existing unlocked CLI accounts.
+
+The submitted release has two disclosed correctness limitations found after submission: its deployed Merivox source can expose `APPROVED` for a unique but ineligible binding tally (dispatch still fails closed), and its deployed frontend uses the older limited-page publication check. The remediation corrects both in source and requires a new compatible pair before those fixes can be live.

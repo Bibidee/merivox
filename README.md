@@ -6,7 +6,7 @@ Merivox is a backendless GenLayer application for forming more representative co
 
 ## Current status
 
-The release preserves the original decision-studio identity while extending it with a second, contract-enforced ActionGate for governed community announcements. The corrected pair has fresh Studionet grant and revoke lifecycle evidence, including finalized parent/child delivery, publication success, and post-revocation rejection. The architecture remains backendless: the browser reads and writes both contracts directly through an injected EIP-1193 wallet.
+The submitted release preserves the original decision-studio identity while extending it with a second, contract-enforced ActionGate for governed community announcements. Its Studionet grant and revoke evidence is preserved as historical release evidence. A separate post-submission remediation branch hardens binding approval, typed-envelope reconciliation, pagination and publication readback; it has not been deployed or merged.
 
 | Area | Status |
 |---|---|
@@ -15,8 +15,9 @@ The release preserves the original decision-studio identity while extending it w
 | Validator-backed semantic reconciliation | Implemented with conservative uncertainty/fallback behavior |
 | Frozen ballot, voting, quorum and tie result | Implemented and covered by Direct Mode tests |
 | Current Studionet lifecycle evidence | Corrected pair demonstrates live grant and revoke rounds, validator-backed `DISTINCT`/`EQUIVALENT`, finalized child delivery and publication controls |
-| Remediation release | Deployed with exact source hashes; current pair and all significant receipts are recorded in `docs/LIVE_EVIDENCE.md` |
-| CI verification | Frontend preflight plus static, direct and cross-contract suites are required |
+| Submitted production release | Live at the documented pair; all significant receipts are recorded in `docs/LIVE_EVIDENCE.md` |
+| Remediation branch | `remediation/post-submission-security-remediation`, commits `7a6e1b2` and `e57dbea`; local verification passing, not deployed |
+| CI verification | Submitted `main` passed CI #21; the remediation PR is intentionally unmerged and requires review |
 
 ## Non-negotiable product definition
 
@@ -92,4 +93,10 @@ The browser never contains private keys, and no application backend or database 
 ## Evidence
 
 See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for exact deployment, source-parity, live lifecycle and verification evidence.
+
+## Post-submission remediation
+
+The remediation branch is a proposed replacement implementation, not a claim about the currently deployed bytecode. It prevents a unique-but-ineligible binding result from being labelled `APPROVED`, enforces exact typed action-envelope equality before validator-equivalent nominations merge, indexes announcements per community, reads all bounded pages and verifies publication by the finalized announcement ID. It also records the remaining development-tool audit limitations in [`docs/SECURITY.md`](docs/SECURITY.md).
+
+No contract redeployment, Vercel configuration change or merge was performed. A replacement Merivox/ActionGate pair is required before the on-chain approval-state correction can exist in production; existing historical spaces, decisions and permissions would remain on the old pair and would need an explicit migration policy.
 
