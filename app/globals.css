@@ -55,6 +55,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .wallet-toggle { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 13px; border: 1px solid var(--line); border-radius: 9px; color: var(--navy); background: var(--white); font-weight: 700; }
 .wallet-toggle:hover { border-color: var(--blue); }
 .wallet-popover { position: absolute; z-index: 30; right: 0; bottom: calc(100% + 9px); width: 280px; padding: 15px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); color: var(--navy); box-shadow: var(--shadow-strong); }
+.rail-wallet .wallet-popover { left: 0; right: auto; }
 .wallet-popover strong, .wallet-popover code, .wallet-popover p { display: block; }
 .wallet-popover code { margin: 8px 0; overflow: hidden; color: var(--muted); font: 11px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
 .wallet-popover p { margin: 0 0 12px; color: var(--muted); font-size: 12px; }
